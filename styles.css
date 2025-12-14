@@ -6,3 +6,20 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.roller {
+    border: 1px solid var(--background-modifier-border);
+    padding: 10 px
+}
+
+.roller__title {
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(118, 3, 26);
+    text-align: center;
+}
+
+.roller__text {
+    color: white;
+    font-size: 16px;
+}

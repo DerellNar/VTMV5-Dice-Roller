@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "vtm-diceroller-plugin",
+	"version": "0.0.1",
+	"description": "A dice roller plugin for Vampire The Masquerade V5 TTRPG.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

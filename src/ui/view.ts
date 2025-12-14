@@ -49,8 +49,8 @@ class DiceRollView extends ItemView {
         
         // Input Roll Difficulty
         inputContainer.createEl('label', { text: 'Difficulty: ' });
-        const diceDifficultyInput = inputContainer.createEl('input', { type: 'number', value: '1' });
-        diceDifficultyInput.setAttribute('min', '1');
+        const diceDifficultyInput = inputContainer.createEl('input', { type: 'number', value: '0' });
+        diceDifficultyInput.setAttribute('min', '0');
         diceDifficultyInput.setAttribute('max', '20');
 
         // Roll button
@@ -172,7 +172,7 @@ class DiceRollView extends ItemView {
             //console.log('numSuccess:', numSuccess, 'numCrit:', numCrit, 'numMessyCrit:', numMessyCrit, 'numBestialFail:', numBestialFail);
 
             const numDifficulty = parseInt(diceDifficultyInput.value);
-            if (numSuccess < numDifficulty) {
+            if (numSuccess < numDifficulty || numSuccess < 1) {
                 resultText += (numBestialFail >= 1) ? "Bestial Failure" : "Failure";
             } else {
                 const totalCrits = numCrit + numMessyCrit;
@@ -190,9 +190,15 @@ class DiceRollView extends ItemView {
             resultsEl.createEl('br');
             
             // Summary Header
-            resultsEl.createEl('h4', { text: 'Summary:' });
+            resultsEl.createEl('h4', { text: 'Result:' });
             resultsEl.createEl('p', { text: resultText });
 
+        });
+
+        // Willpower Reroll Button
+        const willpowerRerollButton = container.createEl('button', { text: 'Reroll Failures with Willpower' });
+        willpowerRerollButton.addEventListener('click', () => {
+            new Notice('Willpower Reroll not yet implemented.');
         });
     }
 

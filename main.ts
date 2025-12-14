@@ -2,25 +2,25 @@ import { App, Editor, MarkdownView, Notice, Plugin, PluginSettingTab, Setting, I
 
 // Remember to rename these classes and interfaces!
 
-interface VtmDicerollerSettings {
+interface VTMV5DiceRollerSettings {
 	mySetting: string;
 }
 
-const DEFAULT_SETTINGS: VtmDicerollerSettings = {
+const DEFAULT_SETTINGS: VTMV5DiceRollerSettings = {
 	mySetting: 'default'
 }
 
-export default class VtmDicerollerPlugin extends Plugin {
-	settings: VtmDicerollerSettings;
+export default class VTMV5DiceRollerPlugin extends Plugin {
+	settings: VTMV5DiceRollerSettings;
 
 	async onload() {
 		await this.loadSettings();
 
 		// Register the view
-		this.registerView('vtm-dice-roller', (leaf: WorkspaceLeaf) => new DiceRollView(leaf));
+		this.registerView('vtmv5-dice-roller', (leaf: WorkspaceLeaf) => new DiceRollView(leaf));
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dices', 'VTM Dice Roller', (_evt: MouseEvent) => {
+		const ribbonIconEl = this.addRibbonIcon('dices', 'VTMV5 Dice Roller', (_evt: MouseEvent) => {
 			// Called when the user clicks the icon.
 			this.openDiceRollView();
 		});
@@ -29,12 +29,12 @@ export default class VtmDicerollerPlugin extends Plugin {
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('VTM Dice Roller');
+		statusBarItemEl.setText('VTMV5 Dice Roller');
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'open-vtm-modal-simple',
-			name: 'Open VTM dice roller view (simple)',
+			id: 'open-vtmv5-dice-roller-view-simple',
+			name: 'Open VTMV5 dice roller view (simple)',
 			callback: () => {
 				this.openDiceRollView();
 			}
@@ -42,18 +42,18 @@ export default class VtmDicerollerPlugin extends Plugin {
 
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'vtm-editor-command',
-			name: 'VTM editor command',
+			id: 'vtmv5-dice-roller-editor-command',
+			name: 'VTMV5 Dice Roller editor command',
 			editorCallback: (editor: Editor, _view: MarkdownView) => {
 				console.log(editor.getSelection());
-				editor.replaceSelection('VTM Editor Command');
+				editor.replaceSelection('VTMV5 Dice Roller Editor Command');
 			}
 		});
 
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
-			id: 'open-vtm-modal-complex',
-			name: 'Open VTM dice roller view (complex)',
+			id: 'open-vtmv5-dice-roller-view-complex',
+			name: 'Open VTMV5 dice roller view (complex)',
 			checkCallback: (checking: boolean) => {
 				// Conditions to check
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -89,7 +89,7 @@ export default class VtmDicerollerPlugin extends Plugin {
 
 	async openDiceRollView() {
 		const leaf = this.app.workspace.getRightLeaf(false);//.getLeaf(true);
-		if (leaf) { await leaf.setViewState({ type: 'vtm-dice-roller' }); }
+		if (leaf) { await leaf.setViewState({ type: 'vtmv5-dice-roller' }); }
 	}
 
 	async loadSettings() {
@@ -103,11 +103,11 @@ export default class VtmDicerollerPlugin extends Plugin {
 
 class DiceRollView extends ItemView {
 	getViewType(): string {
-		return 'vtm-dice-roller';
+		return 'vtmv5-dice-roller';
 	}
 
 	getDisplayText(): string {
-		return 'VTM Dice Roller';
+		return 'VTMV5 Dice Roller';
 	}
 
 	getIcon(): string {
@@ -244,9 +244,9 @@ class DiceRollView extends ItemView {
 }
 
 class VtmSettingTab extends PluginSettingTab {
-	plugin: VtmDicerollerPlugin;
+	plugin: VTMV5DiceRollerPlugin;
 
-	constructor(app: App, plugin: VtmDicerollerPlugin) {
+	constructor(app: App, plugin: VTMV5DiceRollerPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}

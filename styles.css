@@ -7,12 +7,15 @@ If your plugin does not need CSS, delete this file.
 
 */
 
+/* Official VTM Red: rgb(118, 3, 26); */
+
 .roller {
-    border: 1px solid var(--background-modifier-border);
+    border: 10px solid var(--background-modifier-border);
     padding: 10 px
 }
 
 .roller__title {
+    border: 5px solid rgb(118, 3, 26);
     font-size: 24px;
     font-weight: bold;
     color: rgb(118, 3, 26);
@@ -22,4 +25,9 @@ If your plugin does not need CSS, delete this file.
 .roller__text {
     color: white;
     font-size: 16px;
+}
+
+.roller__hunger {
+    color: rgb(147, 4, 32);
+    font-weight: bold;
 }

@@ -31,3 +31,8 @@ If your plugin does not need CSS, delete this file.
     color: rgb(147, 4, 32);
     font-weight: bold;
 }
+
+.roller__results {
+    color: white;
+    font-size: 16px;
+}

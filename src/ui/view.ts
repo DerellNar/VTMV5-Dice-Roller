@@ -44,15 +44,32 @@ class DiceRollView extends ItemView {
         diceHungerInput.setAttribute('min', '1');
         diceHungerInput.setAttribute('max', '5');
 
+        // Line Break
+        inputContainer.createEl('br');
+        
+        // Input Roll Difficulty
+        inputContainer.createEl('label', { text: 'Difficulty: ' });
+        const diceDifficultyInput = inputContainer.createEl('input', { type: 'number', value: '1' });
+        diceDifficultyInput.setAttribute('min', '1');
+        diceDifficultyInput.setAttribute('max', '20');
+
         // Roll button
         const rollButton = container.createEl('button', { text: 'Roll Dice' });
         rollButton.addEventListener('click', () => {
             const numHunger = parseInt(diceHungerInput.value);
             const numRegularDice = parseInt(dicePoolInput.value) - numHunger;
+            //console.log('Regular Dice:', numRegularDice, 'Hunger Dice: ', numHunger);
             if (isNaN(numRegularDice) || numRegularDice < 1) {
                 new Notice('Please enter a valid number of dice.');
                 return;
             }
+
+            /* Roll Dice */
+            // Containers for counting results
+            var numSuccess = 0;
+            var numCrit = 0;
+            var numMessyCrit = 0;
+            var numBestialFail = 0;
 
             // Roll Regular Dice
             const regularResults: (string | HTMLElement)[] = [];
@@ -60,31 +77,28 @@ class DiceRollView extends ItemView {
                 var dieValue = Math.floor(Math.random() * 10) + 1
                 switch (dieValue) {
                     case 10:
+                        /* Push an image instead of text example
                         const critImg = document.createElement('img');
                         critImg.src = './images/Crit.png'; // Path of Image
                         critImg.alt = 'Critical Success';
                         critImg.style.width = '20px';
                         critImg.style.height = '20px';
                         regularResults.push(critImg);
+                        */
+                        regularResults.push('Crit');
+                        numCrit += 1;
+                        numSuccess += 1;
                         break;
                     case 6:
                     case 7:
                     case 8:
                     case 9:
-                        const successImg = document.createElement('img');
-                        successImg.src = './images/Success.png';
-                        successImg.alt = 'Success';
-                        successImg.style.width = '20px';
-                        successImg.style.height = '20px';
-                        regularResults.push(successImg);
+                        regularResults.push('Success');
+                        numSuccess += 1;
                         break;
                     default:
-                        const failImg = document.createElement('img');
-                        failImg.src = './images/Teeth.png';
-                        failImg.alt = 'Fail';
-                        failImg.style.width = '20px';
-                        failImg.style.height = '20px';
-                        regularResults.push(failImg);
+                        regularResults.push('Fail');
+                        break;
                 }
             }
 
@@ -95,22 +109,28 @@ class DiceRollView extends ItemView {
                 switch (diceValue) {
                     case 10:
                         hungerResults.push('Messy Crit');
+                        numMessyCrit += 1;
+                        numSuccess += 1;
                         break;
                     case 6:
                     case 7:
                     case 8:
                     case 9:
                         hungerResults.push('Success');
+                        numSuccess += 1;
                         break;
                     case 1:
                         hungerResults.push('Bestial Fail');
+                        numBestialFail += 1;
                         break;
                     default:
                         hungerResults.push('Fail');
+                        break;
                 }
             }
 
-            // Display results
+            /* Display results */
+            // Setup Div
             const resultDiv = container.querySelector('.results') as HTMLElement;
             if (resultDiv) {
                 resultDiv.empty();
@@ -118,9 +138,10 @@ class DiceRollView extends ItemView {
                 container.createDiv({ cls: 'results' });
             }
 
-            // Setup Div
             const resultsEl = container.querySelector('.results') as HTMLElement;
             resultsEl.createEl('h4', { text: 'Regular Dice:' });
+
+            /* Display Images Example
             const regularP = resultsEl.createEl('p');
             regularResults.forEach((item, index) => {
                 if (typeof item === 'string') {
@@ -132,13 +153,46 @@ class DiceRollView extends ItemView {
                     regularP.appendChild(document.createTextNode(' '));
                 }
             });
+            */
+
+            // Regular Dice Results
+            resultsEl.createEl('p', { text: regularResults.join(' | ') });
 
             // Space between regular and hunger results
             resultsEl.createEl('br');
 
             // Hunger Dice Results
             resultsEl.createEl('h4', { text: 'Hunger Dice:' });
-            resultsEl.createEl('p', { text: hungerResults.join(', ') });
+            resultsEl.createEl('p', { text: hungerResults.join(' | ') });
+
+            /* Display verbose result */
+            // Calculate total crits including messy crits
+            var resultText = '';
+            var critText = '';
+            //console.log('numSuccess:', numSuccess, 'numCrit:', numCrit, 'numMessyCrit:', numMessyCrit, 'numBestialFail:', numBestialFail);
+
+            const numDifficulty = parseInt(diceDifficultyInput.value);
+            if (numSuccess < numDifficulty) {
+                resultText += (numBestialFail >= 1) ? "Bestial Failure" : "Failure";
+            } else {
+                const totalCrits = numCrit + numMessyCrit;
+                var totalSuccesses = numSuccess;
+                //console.log('totalCrits:', totalCrits);
+                if (totalCrits > 1) {
+                    // Each pair of crits adds 2 extra successes
+                    totalSuccesses += 2 * (Math.floor(totalCrits / 2));
+                    critText = (numMessyCrit >= 1)? ": Messy Crititcal" : ": Critical Success";
+                }
+                resultText = `${totalSuccesses} Successes` + critText;
+            }
+
+            // Space before summary
+            resultsEl.createEl('br');
+            
+            // Summary Header
+            resultsEl.createEl('h4', { text: 'Summary:' });
+            resultsEl.createEl('p', { text: resultText });
+
         });
     }
 

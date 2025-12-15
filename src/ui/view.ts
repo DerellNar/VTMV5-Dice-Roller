@@ -74,7 +74,10 @@ class DiceRollView extends ItemView {
             // Roll Regular Dice
             const regularResults: (string | HTMLElement)[] = [];
             for (let i = 0; i < numRegularDice; i++) {
+                // Random number between 1 and 10
                 var dieValue = Math.floor(Math.random() * 10) + 1
+
+                // Check Result
                 switch (dieValue) {
                     case 10:
                         /* Push an image instead of text example
@@ -105,7 +108,10 @@ class DiceRollView extends ItemView {
             // Roll Hunger Dice
             const hungerResults = [];
             for (let i = 0; i < numHunger; i++) {
+                // Random number between 1 and 10
                 var diceValue = Math.floor(Math.random() * 10) + 1;
+
+                // Check Result
                 switch (diceValue) {
                     case 10:
                         hungerResults.push('Messy Crit');
@@ -193,10 +199,13 @@ class DiceRollView extends ItemView {
             resultsEl.createEl('h4', { text: 'Result:' });
             resultsEl.createEl('p', { text: resultText });
 
+            // Show Willpower Reroll Button after a roll
+            willpowerRerollButton.toggleVisibility(true);
         });
 
         // Willpower Reroll Button
         const willpowerRerollButton = container.createEl('button', { text: 'Reroll Failures with Willpower' });
+        willpowerRerollButton.toggleVisibility(false); // Hide initially
         willpowerRerollButton.addEventListener('click', () => {
             new Notice('Willpower Reroll not yet implemented.');
         });

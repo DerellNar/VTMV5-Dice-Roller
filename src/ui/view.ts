@@ -46,7 +46,7 @@ class DiceRollView extends ItemView {
 
         // Line Break
         inputContainer.createEl('br');
-        
+
         // Input Roll Difficulty
         inputContainer.createEl('label', { text: 'Difficulty: ' });
         const diceDifficultyInput = inputContainer.createEl('input', { type: 'number', value: '0' });
@@ -66,16 +66,16 @@ class DiceRollView extends ItemView {
 
             /* Roll Dice */
             // Containers for counting results
-            var numSuccess = 0;
-            var numCrit = 0;
-            var numMessyCrit = 0;
-            var numBestialFail = 0;
+            let numSuccess = 0;
+            let numCrit = 0;
+            let numMessyCrit = 0;
+            let numBestialFail = 0;
 
             // Roll Regular Dice
             const regularResults: (string | HTMLElement)[] = [];
             for (let i = 0; i < numRegularDice; i++) {
                 // Random number between 1 and 10
-                var dieValue = Math.floor(Math.random() * 10) + 1
+                const dieValue = Math.floor(Math.random() * 10) + 1
 
                 // Check Result
                 switch (dieValue) {
@@ -109,10 +109,10 @@ class DiceRollView extends ItemView {
             const hungerResults = [];
             for (let i = 0; i < numHunger; i++) {
                 // Random number between 1 and 10
-                var diceValue = Math.floor(Math.random() * 10) + 1;
+                const dieValue = Math.floor(Math.random() * 10) + 1;
 
                 // Check Result
-                switch (diceValue) {
+                switch (dieValue) {
                     case 10:
                         hungerResults.push('Messy Crit');
                         numMessyCrit += 1;
@@ -173,8 +173,8 @@ class DiceRollView extends ItemView {
 
             /* Display verbose result */
             // Calculate total crits including messy crits
-            var resultText = '';
-            var critText = '';
+            let resultText = '';
+            let critText = '';
             //console.log('numSuccess:', numSuccess, 'numCrit:', numCrit, 'numMessyCrit:', numMessyCrit, 'numBestialFail:', numBestialFail);
 
             const numDifficulty = parseInt(diceDifficultyInput.value);
@@ -182,7 +182,7 @@ class DiceRollView extends ItemView {
                 resultText += (numBestialFail >= 1) ? "Bestial Failure" : "Failure";
             } else {
                 const totalCrits = numCrit + numMessyCrit;
-                var totalSuccesses = numSuccess;
+                let totalSuccesses = numSuccess;
                 //console.log('totalCrits:', totalCrits);
                 if (totalCrits > 1) {
                     // Each pair of crits adds 2 extra successes
@@ -194,7 +194,7 @@ class DiceRollView extends ItemView {
 
             // Space before summary
             resultsEl.createEl('br');
-            
+
             // Summary Header
             resultsEl.createEl('h4', { text: 'Result:' });
             resultsEl.createEl('p', { text: resultText });

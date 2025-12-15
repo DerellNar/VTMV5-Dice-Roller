@@ -1,4 +1,4 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { App, PluginSettingTab, Setting } from 'obsidian';
 import VTMV5DiceRollerPlugin from 'src/main';
 
 export interface VTMV5DiceRollerSettings {
@@ -24,15 +24,16 @@ class VTMV5SettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        new Setting(containerEl)
-            .setName('Setting #1')
-            .setDesc('It\'s a secret')
-            .addText(text => text
-                .setPlaceholder('Enter your secret')
-                .setValue(this.plugin.settings.mySetting)
-                .onChange(async (value) => {
-                    this.plugin.settings.mySetting = value;
-                    await this.plugin.saveSettings();
-                }));
+		new Setting(containerEl)
+			.setName('Willpower Re-roll Method')
+			.setDesc('Choose how to use the willpower Re-Roll')
+			.addDropdown(dropdown => dropdown
+				.addOption('crit', 'Re-roll for Max Critical')
+				.addOption('fail', 'Re-roll Max Failed')
+				.setValue(this.plugin.settings.mySetting)
+				.onChange(async (value) => {
+					this.plugin.settings.mySetting = value;
+					await this.plugin.saveSettings();
+				}));
     }
 }

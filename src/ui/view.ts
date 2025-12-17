@@ -1,9 +1,40 @@
-import { ItemView, Notice } from 'obsidian';
+import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
+import VTMV5DiceRollerPlugin from 'src/main';
 
 export
 
 class DiceRollView extends ItemView {
-    getViewType(): string {
+	private plugin: VTMV5DiceRollerPlugin;
+
+	//Container for the Dice Results
+	regularResults: (string | HTMLElement)[];
+    hungerResults: (string | HTMLElement)[];
+
+    // Containers for counting results
+    numSuccess: number;
+    numCrit: number;
+    numMessyCrit: number;
+    numBestialFail: number;
+	numDifficulty: number;
+
+    // HTML Container
+    container: Element;
+
+    constructor(leaf: WorkspaceLeaf, plugin: VTMV5DiceRollerPlugin) {
+        super(leaf);
+		this.plugin = plugin;
+
+		this.regularResults = [];
+		this.hungerResults = [];
+
+		this.numSuccess = 0;
+		this.numCrit = 0;
+		this.numMessyCrit = 0;
+		this.numBestialFail = 0;
+		this.numDifficulty = 0;
+    }
+
+	getViewType(): string {
         return 'vtmv5-dice-roller';
     }
 
@@ -15,22 +46,125 @@ class DiceRollView extends ItemView {
         return 'dices';
     }
 
-    async onOpen() {
-        const container = this.containerEl.children[1];
-        container.empty();
-        container.setAttribute('style', 'padding: 10px;');
+    getRegularDieResult(die: number): (string | HTMLElement) {
+		switch (die) {
+			case 10:
+				/* Push an image instead of text example
+	            const critImg = document.createElement('img');
+	            critImg.src = './images/Crit.png'; // Path of Image
+	            critImg.alt = 'Critical Success';
+	            critImg.style.width = '20px';
+	            critImg.style.height = '20px';
+	            regularResults.push(critImg);
+	            */
+				return 'Critical';
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+				return 'Success';
+			default:
+				return 'Failure';
+		}
+    }
 
-        //container.createDiv({ cls: 'roller' });
+    getHungerDiceResult(die: number): (string | HTMLElement) {
+		switch (die) {
+			case 10:
+				return 'Messy Critical';
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+				return 'Success';
+			case 1:
+				return 'Bestial Failure';
+			default:
+				return 'Failure';
+		}
+    }
+
+    displayVerboseResults(){
+		// Setup Div
+		const resultDiv = this.container.querySelector('.results') as HTMLElement;
+		if (resultDiv) {
+			resultDiv.empty();
+		} else {
+			this.container.createDiv({ cls: 'results' });
+		}
+
+		const resultsEl = this.container.querySelector('.results') as HTMLElement;
+		resultsEl.createEl('h4', { text: 'Regular Dice:' });
+
+		/* Display Images Example
+	    const regularP = resultsEl.createEl('p');
+	    regularResults.forEach((item, index) => {
+	        if (typeof item === 'string') {
+	            regularP.appendChild(document.createTextNode(item));
+	        } else {
+	            regularP.appendChild(item);
+	        }
+	        if (index < regularResults.length - 1) {
+	            regularP.appendChild(document.createTextNode(' '));
+	        }
+	    });
+	    */
+
+		// Regular Dice Results
+		resultsEl.createEl('p', { text: this.regularResults.join(' | ') });
+
+		// Space between regular and hunger results
+		resultsEl.createEl('br');
+
+		// Hunger Dice Results
+		resultsEl.createEl('h4', { text: 'Hunger Dice:' });
+		resultsEl.createEl('p', { text: this.hungerResults.join(' | ') });
+
+		/* Display verbose result */
+		// Calculate total crits including messy crits
+		let resultText = '';
+		let critText = '';
+		//console.log('numSuccess:', numSuccess, 'numCrit:', numCrit, 'numMessyCrit:', numMessyCrit, 'numBestialFail:', numBestialFail);
+
+		if (this.numSuccess < this.numDifficulty || this.numSuccess < 1) {
+			resultText += (this.numBestialFail >= 1) ? "Bestial Failure" : "Failure";
+		} else {
+			const totalCrits = this.numCrit + this.numMessyCrit;
+			let totalSuccesses = this.numSuccess;
+			//console.log('totalCrits:', totalCrits);
+			if (totalCrits > 1) {
+				// Each pair of crits adds 2 extra successes
+				totalSuccesses += 2 * (Math.floor(totalCrits / 2));
+				critText = (this.numMessyCrit >= 1)? ": Messy Crititcal" : ": Critical Success";
+			}
+			resultText = `${totalSuccesses} Successes` + critText;
+		}
+
+		// Space before summary
+		resultsEl.createEl('br');
+
+		// Summary Header
+		resultsEl.createEl('h4', { text: 'Result:' });
+		resultsEl.createEl('p', { text: resultText });
+    }
+
+    async onOpen() {
+        this.container = this.containerEl.children[1];
+        this.container.empty();
+        this.container.setAttribute('style', 'padding: 10px;');
+
+        // Get settings
+		const pluginSettings = this.plugin.settings;
 
         // View Title
-        container.createEl('h2', { text: 'Vampire the Masquerade V5 Dice Roller', cls: 'roller__title' });
-        container.createEl('h3', { text: 'Dice Pool:', cls: 'roller__text' });
+        this.container.createEl('h2', { text: 'Vampire the Masquerade V5 Dice Roller', cls: 'roller__title' });
+        this.container.createEl('h3', { text: 'Dice Pool:', cls: 'roller__text' });
 
         // Input for number of dice
-        const inputContainer = container.createDiv();
+        const inputContainer = this.container.createDiv();
 
         // Input Total Dice Pool
-        inputContainer.createEl('label', { text: 'Total Dice: ' });
+        inputContainer.createEl('label', { text: 'Total Dice: ', cls: 'roller__text' });
         const dicePoolInput = inputContainer.createEl('input', { type: 'number', value: '5' });
         dicePoolInput.setAttribute('min', '1');
         dicePoolInput.setAttribute('max', '20');
@@ -48,13 +182,13 @@ class DiceRollView extends ItemView {
         inputContainer.createEl('br');
 
         // Input Roll Difficulty
-        inputContainer.createEl('label', { text: 'Difficulty: ' });
+        inputContainer.createEl('label', { text: 'Difficulty: ', cls: 'roller__text' });
         const diceDifficultyInput = inputContainer.createEl('input', { type: 'number', value: '0' });
         diceDifficultyInput.setAttribute('min', '0');
         diceDifficultyInput.setAttribute('max', '20');
 
         // Roll button
-        const rollButton = container.createEl('button', { text: 'Roll Dice' });
+        const rollButton = this.container.createEl('button', { text: 'Roll Dice' });
         rollButton.addEventListener('click', () => {
             const numHunger = parseInt(diceHungerInput.value);
             const numRegularDice = parseInt(dicePoolInput.value) - numHunger;
@@ -64,150 +198,114 @@ class DiceRollView extends ItemView {
                 return;
             }
 
-            /* Roll Dice */
-            // Containers for counting results
-            let numSuccess = 0;
-            let numCrit = 0;
-            let numMessyCrit = 0;
-            let numBestialFail = 0;
+            // Reset Result Values
+            this.numSuccess = 0;
+			this.numCrit = 0;
+			this.numMessyCrit = 0;
+			this.numBestialFail = 0;
+			this.numDifficulty = 0;
+
+            // Set Difficulty
+            this.numDifficulty = parseInt(diceDifficultyInput.value);
 
             // Roll Regular Dice
-            const regularResults: (string | HTMLElement)[] = [];
+			this.regularResults = [];
             for (let i = 0; i < numRegularDice; i++) {
                 // Random number between 1 and 10
-                const dieValue = Math.floor(Math.random() * 10) + 1
+				const regularDieResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+				this.regularResults.push(regularDieResult);
 
-                // Check Result
-                switch (dieValue) {
-                    case 10:
-                        /* Push an image instead of text example
-                        const critImg = document.createElement('img');
-                        critImg.src = './images/Crit.png'; // Path of Image
-                        critImg.alt = 'Critical Success';
-                        critImg.style.width = '20px';
-                        critImg.style.height = '20px';
-                        regularResults.push(critImg);
-                        */
-                        regularResults.push('Crit');
-                        numCrit += 1;
-                        numSuccess += 1;
-                        break;
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                        regularResults.push('Success');
-                        numSuccess += 1;
-                        break;
-                    default:
-                        regularResults.push('Fail');
-                        break;
-                }
+				if (regularDieResult == 'Critical') {
+					this.numCrit += 1;
+					this.numSuccess += 1;
+				} else if (regularDieResult ==  'Success') {
+					this.numSuccess += 1;
+				}
             }
 
             // Roll Hunger Dice
-            const hungerResults = [];
+            this.hungerResults = [];
             for (let i = 0; i < numHunger; i++) {
                 // Random number between 1 and 10
-                const dieValue = Math.floor(Math.random() * 10) + 1;
+				const hungerDieResult = this.getHungerDiceResult(Math.floor(Math.random() * 10) + 1);
+				this.hungerResults.push(hungerDieResult);
 
-                // Check Result
-                switch (dieValue) {
-                    case 10:
-                        hungerResults.push('Messy Crit');
-                        numMessyCrit += 1;
-                        numSuccess += 1;
-                        break;
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                        hungerResults.push('Success');
-                        numSuccess += 1;
-                        break;
-                    case 1:
-                        hungerResults.push('Bestial Fail');
-                        numBestialFail += 1;
-                        break;
-                    default:
-                        hungerResults.push('Fail');
-                        break;
-                }
+				if (hungerDieResult == 'Messy Critical') {
+					this.numMessyCrit += 1;
+					this.numSuccess += 1;
+				} else if (hungerDieResult == 'Success') {
+					this.numSuccess += 1;
+				} else if (hungerDieResult == 'Bestial Failure') {
+					this.numBestialFail += 1;
+				}
             }
 
-            /* Display results */
-            // Setup Div
-            const resultDiv = container.querySelector('.results') as HTMLElement;
-            if (resultDiv) {
-                resultDiv.empty();
-            } else {
-                container.createDiv({ cls: 'results' });
-            }
-
-            const resultsEl = container.querySelector('.results') as HTMLElement;
-            resultsEl.createEl('h4', { text: 'Regular Dice:' });
-
-            /* Display Images Example
-            const regularP = resultsEl.createEl('p');
-            regularResults.forEach((item, index) => {
-                if (typeof item === 'string') {
-                    regularP.appendChild(document.createTextNode(item));
-                } else {
-                    regularP.appendChild(item);
-                }
-                if (index < regularResults.length - 1) {
-                    regularP.appendChild(document.createTextNode(' '));
-                }
-            });
-            */
-
-            // Regular Dice Results
-            resultsEl.createEl('p', { text: regularResults.join(' | ') });
-
-            // Space between regular and hunger results
-            resultsEl.createEl('br');
-
-            // Hunger Dice Results
-            resultsEl.createEl('h4', { text: 'Hunger Dice:' });
-            resultsEl.createEl('p', { text: hungerResults.join(' | ') });
-
-            /* Display verbose result */
-            // Calculate total crits including messy crits
-            let resultText = '';
-            let critText = '';
-            //console.log('numSuccess:', numSuccess, 'numCrit:', numCrit, 'numMessyCrit:', numMessyCrit, 'numBestialFail:', numBestialFail);
-
-            const numDifficulty = parseInt(diceDifficultyInput.value);
-            if (numSuccess < numDifficulty || numSuccess < 1) {
-                resultText += (numBestialFail >= 1) ? "Bestial Failure" : "Failure";
-            } else {
-                const totalCrits = numCrit + numMessyCrit;
-                let totalSuccesses = numSuccess;
-                //console.log('totalCrits:', totalCrits);
-                if (totalCrits > 1) {
-                    // Each pair of crits adds 2 extra successes
-                    totalSuccesses += 2 * (Math.floor(totalCrits / 2));
-                    critText = (numMessyCrit >= 1)? ": Messy Crititcal" : ": Critical Success";
-                }
-                resultText = `${totalSuccesses} Successes` + critText;
-            }
-
-            // Space before summary
-            resultsEl.createEl('br');
-
-            // Summary Header
-            resultsEl.createEl('h4', { text: 'Result:' });
-            resultsEl.createEl('p', { text: resultText });
+            // Display results
+			this.displayVerboseResults();
 
             // Show Willpower Reroll Button after a roll
             willpowerRerollButton.toggleVisibility(true);
         });
 
         // Willpower Reroll Button
-        const willpowerRerollButton = container.createEl('button', { text: 'Reroll Failures with Willpower' });
+        const willpowerRerollButton = this.container.createEl('button', { text: 'Reroll Failures with Willpower' });
         willpowerRerollButton.toggleVisibility(false); // Hide initially
         willpowerRerollButton.addEventListener('click', () => {
-            new Notice('Willpower Reroll not yet implemented.');
+            //  Get Settings for Willpower Re-roll
+            //console.log(pluginSettings.willpowerRerollMethod);
+            const rerollType = pluginSettings.willpowerRerollMethod;
+			const maxReroll = 3;
+
+            if (this.regularResults.length > 0) {
+                if (rerollType == 'max_crit') {
+                    // Go through each regular result up to a maximum of 3 and reroll any non-crit die, favouring the failed dice but not limited to
+                    for (let i = 0; i <= maxReroll && i <= this.regularResults.length; i++) {
+                        if (this.regularResults[i] != 'Critical') {
+                            //console.log(regularResults[i]);
+                            const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+
+                            if (this.regularResults[i] == 'Success') {
+								if (newResult == 'Critical') {
+									this.numCrit += 1;
+								} else if (newResult ==  'Failure') {
+									this.numSuccess -= 1;
+								}
+                            } else {
+                                if (newResult == 'Critical') {
+									this.numCrit += 1;
+								} else if (newResult ==  'Success') {
+									this.numSuccess += 1;
+								}
+                            }
+
+							this.regularResults[i] = newResult;
+                        }
+                    }
+                } else if (rerollType == 'max_fail') {
+                    // Only go through each failed result up to a maximum of 3
+                    for (let i = 0; i <= maxReroll && i <= this.regularResults.length; i++) {
+                        if (this.regularResults[i] == 'Failure') {
+                            //console.log(regularResults[i]);
+							const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+
+							if (newResult == 'Critical') {
+								this.numCrit += 1;
+								this.numSuccess += 1;
+							} else if (newResult ==  'Success') {
+								this.numSuccess += 1;
+							}
+
+							this.regularResults[i] = newResult;
+                        }
+                    }
+                }
+
+                // Display new results
+                this.displayVerboseResults();
+
+                // Hide Willpower Reroll Button after a re-roll
+                willpowerRerollButton.toggleVisibility(false);
+            }
         });
     }
 

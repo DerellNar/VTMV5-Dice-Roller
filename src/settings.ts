@@ -2,11 +2,11 @@ import { App, PluginSettingTab, Setting } from 'obsidian';
 import VTMV5DiceRollerPlugin from 'src/main';
 
 export interface VTMV5DiceRollerSettings {
-    mySetting: string;
+    willpowerRerollMethod: string;
 }
 
 export const DEFAULT_SETTINGS: VTMV5DiceRollerSettings = {
-    mySetting: 'default'
+    willpowerRerollMethod: 'max_fail'
 }
 
 export
@@ -26,13 +26,13 @@ class VTMV5SettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Willpower Re-roll Method')
-			.setDesc('Choose how to use the willpower Re-Roll')
+			.setDesc('Choose how to use the willpower Re-roll')
 			.addDropdown(dropdown => dropdown
-				.addOption('crit', 'Re-roll for Max Critical')
-				.addOption('fail', 'Re-roll Max Failed')
-				.setValue(this.plugin.settings.mySetting)
+				.addOption('max_fail', 'Re-roll Max Failed')
+				.addOption('max_crit', 'Re-roll for Max Critical')
+				.setValue(this.plugin.settings.willpowerRerollMethod)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.willpowerRerollMethod = value;
 					await this.plugin.saveSettings();
 				}));
     }

@@ -1,7 +1,7 @@
 import { Editor, MarkdownView, Plugin, WorkspaceLeaf } from 'obsidian';
+import { VTMV5DiceRollerSettings, DEFAULT_SETTINGS } from './settings';
 import { VTMV5SettingTab } from './settings';
 import { DiceRollView } from './ui/view';
-import { VTMV5DiceRollerSettings, DEFAULT_SETTINGS } from './settings';
 
 export default class VTMV5DiceRollerPlugin extends Plugin {
 	settings: VTMV5DiceRollerSettings;
@@ -10,14 +10,14 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 		await this.loadSettings();
 
 		// Register the view
-		this.registerView('vtmv5-dice-roller', (leaf: WorkspaceLeaf) => new DiceRollView(leaf));
+		this.registerView('vtmv5-dice-roller', (leaf: WorkspaceLeaf) => new DiceRollView(leaf, this));
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dices', 'VTMV5 Dice Roller', (_evt: MouseEvent) => {
 			// Called when the user clicks the icon.
 			this.openDiceRollView();
 		});
-		
+
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 

@@ -49,14 +49,6 @@ class DiceRollView extends ItemView {
     getRegularDieResult(die: number): (string | HTMLElement) {
 		switch (die) {
 			case 10:
-				/* Push an image instead of text example
-	            const critImg = document.createElement('img');
-	            critImg.src = './images/Crit.png'; // Path of Image
-	            critImg.alt = 'Critical Success';
-	            critImg.style.width = '20px';
-	            critImg.style.height = '20px';
-	            regularResults.push(critImg);
-	            */
 				return 'Critical';
 			case 6:
 			case 7:
@@ -214,6 +206,15 @@ class DiceRollView extends ItemView {
                 // Random number between 1 and 10
 				const regularDieResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
 				this.regularResults.push(regularDieResult);
+
+				/* Example: Push an image instead of text
+	            const critImg = document.createElement('img');
+	            critImg.src = './images/Crit.png'; // Path of Image
+	            critImg.alt = 'Critical Success';
+	            critImg.style.width = '20px';
+	            critImg.style.height = '20px';
+	            this.regularResults.push(critImg);
+	            */
 
 				if (regularDieResult == 'Critical') {
 					this.numCrit += 1;

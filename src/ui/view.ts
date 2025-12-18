@@ -258,11 +258,23 @@ class DiceRollView extends ItemView {
 			const maxReroll = 3;
 
             if (this.regularResults.length > 0) {
-                if (rerollType == 'max_crit') {
-                    // Go through each regular result up to a maximum of 3 and reroll any non-crit die, favouring the failed dice but not limited to
-                    for (let i = 0; i <= maxReroll && i <= this.regularResults.length; i++) {
-                        if (this.regularResults[i] != 'Critical') {
-                            //console.log(regularResults[i]);
+                this.regularResults.sort();
+				for (let i = 0; i <= maxReroll && i <= this.regularResults.length; i++) {
+					if (this.regularResults[i] != 'Critical'){
+						if (rerollType == 'max_fail' && this.regularResults[i] != 'Success') {
+							//console.log(regularResults[i]);
+							const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+
+							if (newResult == 'Critical') {
+								this.numCrit += 1;
+								this.numSuccess += 1;
+							} else if (newResult ==  'Success') {
+								this.numSuccess += 1;
+							}
+
+							this.regularResults[i] = newResult;
+						} else if (rerollType == 'max_crit') {
+							//console.log(regularResults[i]);
                             const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
 
                             if (this.regularResults[i] == 'Success') {
@@ -277,29 +289,12 @@ class DiceRollView extends ItemView {
 								} else if (newResult ==  'Success') {
 									this.numSuccess += 1;
 								}
-                            }
-
-							this.regularResults[i] = newResult;
-                        }
-                    }
-                } else if (rerollType == 'max_fail') {
-                    // Only go through each failed result up to a maximum of 3
-                    for (let i = 0; i <= maxReroll && i <= this.regularResults.length; i++) {
-                        if (this.regularResults[i] == 'Failure') {
-                            //console.log(regularResults[i]);
-							const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
-
-							if (newResult == 'Critical') {
-								this.numCrit += 1;
-								this.numSuccess += 1;
-							} else if (newResult ==  'Success') {
-								this.numSuccess += 1;
 							}
 
 							this.regularResults[i] = newResult;
-                        }
-                    }
-                }
+						}
+					}
+				}
 
                 // Display new results
                 this.displayVerboseResults();

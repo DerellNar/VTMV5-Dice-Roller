@@ -258,40 +258,42 @@ class DiceRollView extends ItemView {
 			const maxReroll = 3;
 
             if (this.regularResults.length > 0) {
-                this.regularResults.sort();
-				for (let i = 0; i <= maxReroll && i <= this.regularResults.length; i++) {
-					if (this.regularResults[i] != 'Critical'){
-						if (rerollType == 'max_fail' && this.regularResults[i] != 'Success') {
-							//console.log(regularResults[i]);
-							const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+                this.regularResults.sort((a,b) => {
+					if (a == 'Failure' && (b == 'Success' || b == 'Critical')) { return -1; }
+					else if (a == 'Success' && b == 'Failure') { return 1; }
+					else if (a == 'Success' && b == 'Critical') { return -1; }
+					else if (a == 'Critical') { return 1; }
+					else { return 0; }
+                });
+				//console.log(this.regularResults);
+				for (let i = 0; i <= maxReroll && i <= this.regularResults.length && this.regularResults[i] != 'Critical'; i++) {
+					let applyReroll = false;
+					const oldResult = this.regularResults[i];
+					let newResult: (string | HTMLElement) = '';
+					if (rerollType == 'max_crit') {
+						newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+						applyReroll = true;
+					} else if (rerollType == 'max_fail' && this.regularResults[i] == 'Failure') {
+						newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+						applyReroll = true;
+					}
 
+					if (applyReroll) {
+						//console.log('Old Result: ' + oldResult + ', New Result: ' + newResult);
+						this.regularResults[i] = newResult;
+						if (oldResult == 'Success') {
+							if (newResult == 'Critical') {
+								this.numCrit += 1;
+							} else if (newResult == 'Failure') {
+								this.numSuccess -= 1;
+							}
+						} else {
 							if (newResult == 'Critical') {
 								this.numCrit += 1;
 								this.numSuccess += 1;
-							} else if (newResult ==  'Success') {
+							} else if (newResult == 'Success') {
 								this.numSuccess += 1;
 							}
-
-							this.regularResults[i] = newResult;
-						} else if (rerollType == 'max_crit') {
-							//console.log(regularResults[i]);
-                            const newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
-
-                            if (this.regularResults[i] == 'Success') {
-								if (newResult == 'Critical') {
-									this.numCrit += 1;
-								} else if (newResult ==  'Failure') {
-									this.numSuccess -= 1;
-								}
-                            } else {
-                                if (newResult == 'Critical') {
-									this.numCrit += 1;
-								} else if (newResult ==  'Success') {
-									this.numSuccess += 1;
-								}
-							}
-
-							this.regularResults[i] = newResult;
 						}
 					}
 				}

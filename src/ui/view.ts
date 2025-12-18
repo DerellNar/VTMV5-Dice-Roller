@@ -118,19 +118,15 @@ class DiceRollView extends ItemView {
 		let critText = '';
 		//console.log('numSuccess:', numSuccess, 'numCrit:', numCrit, 'numMessyCrit:', numMessyCrit, 'numBestialFail:', numBestialFail);
 
-		if (this.numSuccess < this.numDifficulty || this.numSuccess < 1) {
-			resultText += (this.numBestialFail >= 1) ? "Bestial Failure" : "Failure";
-		} else {
-			const totalCrits = this.numCrit + this.numMessyCrit;
-			let totalSuccesses = this.numSuccess;
-			//console.log('totalCrits:', totalCrits);
-			if (totalCrits > 1) {
-				// Each pair of crits adds 2 extra successes
-				totalSuccesses += 2 * (Math.floor(totalCrits / 2));
-				critText = (this.numMessyCrit >= 1)? ": Messy Crititcal" : ": Critical Success";
-			}
-			resultText = `${totalSuccesses} Successes` + critText;
+		const totalCrits = this.numCrit + this.numMessyCrit;
+		let totalSuccesses = this.numSuccess;
+		//console.log('totalCrits:', totalCrits);
+		if (totalCrits > 1) {
+			// Each pair of crits adds 2 extra successes
+			totalSuccesses += 2 * (Math.floor(totalCrits / 2));
+			critText = (this.numMessyCrit >= 1)? ": Messy Crititcal" : ": Critical Success";
 		}
+		resultText = `${totalSuccesses} Successes` + critText;
 
 		// Space before summary
 		resultsEl.createEl('br');
@@ -138,6 +134,24 @@ class DiceRollView extends ItemView {
 		// Summary Header
 		resultsEl.createEl('h4', { text: 'Result:' });
 		resultsEl.createEl('p', { text: resultText });
+
+		// The Roll Final Result
+		let rollFinalResultText = '';
+		if (this.numSuccess < this.numDifficulty || this.numSuccess < 1) {
+			rollFinalResultText = (this.numBestialFail >= 1) ? "Bestial Failure" : "Failure";
+			if (this.numDifficulty > 0 && (this.numDifficulty - this.numSuccess) == 1) {
+				rollFinalResultText += ': 1 away';
+			}
+		} else {
+			rollFinalResultText = 'Success';
+		}
+
+		// Space before Final Result
+		resultsEl.createEl('br');
+
+		// Summary Header
+		resultsEl.createEl('h4', { text: 'The Roll:' });
+		resultsEl.createEl('p', { text: rollFinalResultText });
     }
 
     async onOpen() {

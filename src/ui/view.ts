@@ -273,9 +273,9 @@ class DiceRollView extends ItemView {
 
             if (this.regularResults.length > 0) {
                 this.regularResults.sort((a,b) => {
-					if (a == 'Failure' && (b == 'Success' || b == 'Critical')) { return -1; }
-					else if (a == 'Success' && b == 'Failure') { return 1; }
+					if (a == 'Failure') { return -1; }
 					else if (a == 'Success' && b == 'Critical') { return -1; }
+					else if (a == 'Success' && b == 'Failure') { return 1; }
 					else if (a == 'Critical') { return 1; }
 					else { return 0; }
                 });

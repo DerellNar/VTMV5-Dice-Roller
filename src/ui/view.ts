@@ -118,7 +118,7 @@ class DiceRollView extends ItemView {
 		}
 
 		const resultsEl = this.container.querySelector('.results') as HTMLElement;
-		resultsEl.createEl('h4', { text: 'Regular Dice:', cls: 'roller__subTitle' });
+		resultsEl.createEl('p', { text: 'Regular Dice:', cls: 'roller__subTitle' });
 
 		/* Display Images Example
 	    const regularP = resultsEl.createEl('p');
@@ -138,10 +138,10 @@ class DiceRollView extends ItemView {
 		resultsEl.createEl('p', { text: this.regularResults.join(' '), cls: 'roller__regularResults' });
 
 		// Space between regular and hunger results
-		resultsEl.createEl('br');
+		//resultsEl.createEl('br');
 
 		// Hunger Dice Results
-		resultsEl.createEl('h4', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
+		resultsEl.createEl('p', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
 		resultsEl.createEl('p', { text: this.hungerResults.join(' '), cls: 'roller__hungerResults' });
 
 		/* Display verbose result */
@@ -158,13 +158,13 @@ class DiceRollView extends ItemView {
 			totalSuccesses += 2 * (Math.floor(totalCrits / 2));
 			critText = ": " + (this.numMessyCrit >= 1)? this.messyCriticalMessage : this.criticalMessage;
 		}
-		resultText = `${totalSuccesses} ` + (totalSuccesses > 1 ? this.successMessage : this.successesMessage) + critText;
+		resultText = `${totalSuccesses} ` + (totalSuccesses == 1 ? this.successMessage : this.successesMessage) + critText;
 
 		// Space before summary
-		resultsEl.createEl('br');
+		//resultsEl.createEl('br');
 
 		// Summary Header
-		resultsEl.createEl('h4', { text: 'Result:' });
+		resultsEl.createEl('p', { text: 'Result:', cls: 'roller__subTitle' });
 		resultsEl.createEl('p', { text: resultText, cls: 'roller__text' });
 
 		// The Roll Final Result
@@ -182,7 +182,7 @@ class DiceRollView extends ItemView {
 		resultsEl.createEl('br');
 
 		// Summary Header
-		resultsEl.createEl('h4', { text: 'The Roll:' });
+		resultsEl.createEl('p', { text: 'The Roll:', cls: 'roller__subTitle' });
 		resultsEl.createEl('p', { text: rollFinalResultText });
     }
 
@@ -196,7 +196,7 @@ class DiceRollView extends ItemView {
 
         // View Title
         this.container.createEl('h2', { text: 'Vampire the Masquerade V5 Dice Roller', cls: 'roller__title' });
-        this.container.createEl('h3', { text: 'Dice Pool:', cls: 'roller__text' });
+        this.container.createEl('h3', { text: 'Dice Pool:', cls: 'roller__subTitle' });
 
         // Input for number of dice
         const inputContainer = this.container.createDiv();

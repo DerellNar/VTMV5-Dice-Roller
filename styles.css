@@ -14,6 +14,7 @@ If your plugin does not need CSS, delete this file.
     padding: 10 px;
 }
 
+/* Window Title */
 .roller__title {
 	/* border: 5px solid rgb(118, 3, 26); */
     font-size: 24px;
@@ -22,30 +23,37 @@ If your plugin does not need CSS, delete this file.
     text-align: center;
 }
 
+/* Section Titles: "DicePool:", "Result Dice:" & "Hunger Dice:" */
+.roller__subTitle {
+    color: white;
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* Most Text throughout the Window */
 .roller__text {
     color: white;
     font-size: 16px;
 }
 
-.roller__subTitle {
-    color: white;
-    font-size: 20px;
-}
-
+/* Hunger Text for input box */
 .roller__hungerText {
     color: rgb(147, 4, 32);
     font-size: 16px;
     font-weight: bold;
 }
 
+/* Dice Results: Symbols ☥ *☥* '☥' ⨂ ● */
 .roller__regularResults {
     color: black;
     font-size: 25px;
     font-weight: bold;
+    line-height: 1px;
 }
 
 .roller__hungerResults {
     color: rgb(147, 4, 32);
     font-size: 25px;
     font-weight: bold;
+    line-height: 1px;
 }

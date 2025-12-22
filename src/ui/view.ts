@@ -20,18 +20,50 @@ class DiceRollView extends ItemView {
     // HTML Container
     container: Element;
 
+    // Result Symbols
+    successSymbol: string;
+    criticalSymbol: string;
+    messyCriticalSymbol: string;
+    bestialFailSymbol: string;
+    failureSymbol: string;
+
+    // Result Messages
+    successMessage: string;
+    successesMessage: string;
+    criticalMessage: string;
+    messyCriticalMessage: string;
+    bestialFailMessage: string;
+    failureMessage: string;
+
     constructor(leaf: WorkspaceLeaf, plugin: VTMV5DiceRollerPlugin) {
         super(leaf);
 		this.plugin = plugin;
 
+		// Initialise Result Symbols
+		this.successSymbol = '☥';
+		this.criticalSymbol = '*☥*';
+		this.messyCriticalSymbol = '\'☥\'';
+		this.bestialFailSymbol = '⨂';
+		this.failureSymbol = '●';
+
+		// Initialise Result Containers
 		this.regularResults = [];
 		this.hungerResults = [];
 
+		// Initialise Success Counters
 		this.numSuccess = 0;
 		this.numCrit = 0;
 		this.numMessyCrit = 0;
 		this.numBestialFail = 0;
 		this.numDifficulty = 0;
+
+		// Initialise Result Messages
+		this.successMessage = 'Success';
+		this.successesMessage = 'Successes';
+		this.criticalMessage = 'Critical';
+		this.messyCriticalMessage = 'Messy Critical';
+		this.bestialFailMessage = 'Bestial Failure';
+		this.failureMessage = 'Failure';
     }
 
 	getViewType(): string {
@@ -49,30 +81,30 @@ class DiceRollView extends ItemView {
     getRegularDieResult(die: number): (string | HTMLElement) {
 		switch (die) {
 			case 10:
-				return 'Critical';
+				return this.criticalSymbol;
 			case 6:
 			case 7:
 			case 8:
 			case 9:
-				return 'Success';
+				return this.successSymbol;
 			default:
-				return 'Failure';
+				return this.failureSymbol;
 		}
     }
 
     getHungerDiceResult(die: number): (string | HTMLElement) {
 		switch (die) {
 			case 10:
-				return 'Messy Critical';
+				return this.messyCriticalSymbol;
 			case 6:
 			case 7:
 			case 8:
 			case 9:
-				return 'Success';
+				return this.successSymbol;
 			case 1:
-				return 'Bestial Failure';
+				return this.bestialFailSymbol;
 			default:
-				return 'Failure';
+				return this.failureSymbol;
 		}
     }
 
@@ -86,7 +118,7 @@ class DiceRollView extends ItemView {
 		}
 
 		const resultsEl = this.container.querySelector('.results') as HTMLElement;
-		resultsEl.createEl('h4', { text: 'Regular Dice:' });
+		resultsEl.createEl('h4', { text: 'Regular Dice:', cls: 'roller__subTitle' });
 
 		/* Display Images Example
 	    const regularP = resultsEl.createEl('p');
@@ -103,14 +135,14 @@ class DiceRollView extends ItemView {
 	    */
 
 		// Regular Dice Results
-		resultsEl.createEl('p', { text: this.regularResults.join(' | ') });
+		resultsEl.createEl('p', { text: this.regularResults.join(' '), cls: 'roller__regularResults' });
 
 		// Space between regular and hunger results
 		resultsEl.createEl('br');
 
 		// Hunger Dice Results
-		resultsEl.createEl('h4', { text: 'Hunger Dice:' });
-		resultsEl.createEl('p', { text: this.hungerResults.join(' | ') });
+		resultsEl.createEl('h4', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
+		resultsEl.createEl('p', { text: this.hungerResults.join(' '), cls: 'roller__hungerResults' });
 
 		/* Display verbose result */
 		// Calculate total crits including messy crits
@@ -124,26 +156,26 @@ class DiceRollView extends ItemView {
 		if (totalCrits > 1) {
 			// Each pair of crits adds 2 extra successes
 			totalSuccesses += 2 * (Math.floor(totalCrits / 2));
-			critText = (this.numMessyCrit >= 1)? ": Messy Crititcal" : ": Critical Success";
+			critText = ": " + (this.numMessyCrit >= 1)? this.messyCriticalMessage : this.criticalMessage;
 		}
-		resultText = `${totalSuccesses} Successes` + critText;
+		resultText = `${totalSuccesses} ` + (totalSuccesses > 1 ? this.successMessage : this.successesMessage) + critText;
 
 		// Space before summary
 		resultsEl.createEl('br');
 
 		// Summary Header
 		resultsEl.createEl('h4', { text: 'Result:' });
-		resultsEl.createEl('p', { text: resultText });
+		resultsEl.createEl('p', { text: resultText, cls: 'roller__text' });
 
 		// The Roll Final Result
 		let rollFinalResultText = '';
 		if (this.numSuccess < this.numDifficulty || this.numSuccess < 1) {
-			rollFinalResultText = (this.numBestialFail >= 1) ? "Bestial Failure" : "Failure";
+			rollFinalResultText = (this.numBestialFail >= 1) ? this.bestialFailMessage : this.failureMessage;
 			if (this.numDifficulty > 0 && (this.numDifficulty - this.numSuccess) == 1) {
 				rollFinalResultText += ': 1 away';
 			}
 		} else {
-			rollFinalResultText = 'Success';
+			rollFinalResultText = this.successMessage;
 		}
 
 		// Space before Final Result
@@ -179,7 +211,7 @@ class DiceRollView extends ItemView {
         inputContainer.createEl('br');
 
         // Input Hunger Dice
-        inputContainer.createEl('label', { text: 'Hunger Dice: ', cls: 'roller__hunger' });
+        inputContainer.createEl('label', { text: 'Hunger Dice: ', cls: 'roller__hungerText' });
         const diceHungerInput = inputContainer.createEl('input', { type: 'number', value: '1' });
         diceHungerInput.setAttribute('min', '1');
         diceHungerInput.setAttribute('max', '5');
@@ -230,10 +262,10 @@ class DiceRollView extends ItemView {
 	            this.regularResults.push(critImg);
 	            */
 
-				if (regularDieResult == 'Critical') {
+				if (regularDieResult == this.criticalSymbol) {
 					this.numCrit += 1;
 					this.numSuccess += 1;
-				} else if (regularDieResult ==  'Success') {
+				} else if (regularDieResult ==  this.successSymbol) {
 					this.numSuccess += 1;
 				}
             }
@@ -245,12 +277,12 @@ class DiceRollView extends ItemView {
 				const hungerDieResult = this.getHungerDiceResult(Math.floor(Math.random() * 10) + 1);
 				this.hungerResults.push(hungerDieResult);
 
-				if (hungerDieResult == 'Messy Critical') {
+				if (hungerDieResult == this.messyCriticalSymbol) {
 					this.numMessyCrit += 1;
 					this.numSuccess += 1;
-				} else if (hungerDieResult == 'Success') {
+				} else if (hungerDieResult == this.successSymbol) {
 					this.numSuccess += 1;
-				} else if (hungerDieResult == 'Bestial Failure') {
+				} else if (hungerDieResult == this.bestialFailMessage) {
 					this.numBestialFail += 1;
 				}
             }
@@ -273,21 +305,21 @@ class DiceRollView extends ItemView {
 
             if (this.regularResults.length > 0) {
                 this.regularResults.sort((a,b) => {
-					if (a == 'Failure') { return -1; }
-					else if (a == 'Success' && b == 'Critical') { return -1; }
-					else if (a == 'Success' && b == 'Failure') { return 1; }
-					else if (a == 'Critical') { return 1; }
+					if (a == this.failureSymbol) { return -1; }
+					else if (a == this.successSymbol && b == this.criticalSymbol) { return -1; }
+					else if (a == this.successSymbol && b == this.failureSymbol) { return 1; }
+					else if (a == this.criticalSymbol) { return 1; }
 					else { return 0; }
                 });
 				//console.log(this.regularResults);
-				for (let i = 0; i <= maxReroll && i <= this.regularResults.length && this.regularResults[i] != 'Critical'; i++) {
+				for (let i = 0; i <= maxReroll && i <= this.regularResults.length && this.regularResults[i] != this.criticalSymbol; i++) {
 					let applyReroll = false;
 					const oldResult = this.regularResults[i];
 					let newResult: (string | HTMLElement) = '';
 					if (rerollType == 'max_crit') {
 						newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
 						applyReroll = true;
-					} else if (rerollType == 'max_fail' && this.regularResults[i] == 'Failure') {
+					} else if (rerollType == 'max_fail' && this.regularResults[i] == this.failureSymbol) {
 						newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
 						applyReroll = true;
 					}
@@ -295,17 +327,17 @@ class DiceRollView extends ItemView {
 					if (applyReroll) {
 						//console.log('Old Result: ' + oldResult + ', New Result: ' + newResult);
 						this.regularResults[i] = newResult;
-						if (oldResult == 'Success') {
-							if (newResult == 'Critical') {
+						if (oldResult == this.successSymbol) {
+							if (newResult == this.criticalSymbol) {
 								this.numCrit += 1;
-							} else if (newResult == 'Failure') {
+							} else if (newResult == this.failureSymbol) {
 								this.numSuccess -= 1;
 							}
 						} else {
-							if (newResult == 'Critical') {
+							if (newResult == this.criticalSymbol) {
 								this.numCrit += 1;
 								this.numSuccess += 1;
-							} else if (newResult == 'Success') {
+							} else if (newResult == this.successSymbol) {
 								this.numSuccess += 1;
 							}
 						}

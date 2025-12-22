@@ -9,13 +9,13 @@ If your plugin does not need CSS, delete this file.
 
 /* Official VTM Red: rgb(118, 3, 26); */
 
-.roller {
+.roller__container {
     border: 10px solid var(--background-modifier-border);
-    padding: 10 px
+    padding: 10 px;
 }
 
 .roller__title {
-    border: 5px solid rgb(118, 3, 26);
+	/* border: 5px solid rgb(118, 3, 26); */
     font-size: 24px;
     font-weight: bold;
     color: rgb(118, 3, 26);
@@ -27,12 +27,25 @@ If your plugin does not need CSS, delete this file.
     font-size: 16px;
 }
 
-.roller__hunger {
+.roller__subTitle {
+    color: white;
+    font-size: 20px;
+}
+
+.roller__hungerText {
     color: rgb(147, 4, 32);
+    font-size: 16px;
     font-weight: bold;
 }
 
-.roller__results {
-    color: white;
-    font-size: 16px;
+.roller__regularResults {
+    color: black;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.roller__hungerResults {
+    color: rgb(147, 4, 32);
+    font-size: 25px;
+    font-weight: bold;
 }

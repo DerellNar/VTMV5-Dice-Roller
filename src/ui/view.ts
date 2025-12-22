@@ -40,9 +40,9 @@ class DiceRollView extends ItemView {
 		this.plugin = plugin;
 
 		// Initialise Result Symbols
-		this.successSymbol = '☥';
-		this.criticalSymbol = '*☥*';
-		this.messyCriticalSymbol = '\'☥\'';
+		this.successSymbol = '𓋹';
+		this.criticalSymbol = '*𓋹*';
+		this.messyCriticalSymbol = '\'𓋹\'';
 		this.bestialFailSymbol = '⨂';
 		this.failureSymbol = '●';
 

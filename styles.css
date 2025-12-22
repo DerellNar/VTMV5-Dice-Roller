@@ -43,7 +43,7 @@ If your plugin does not need CSS, delete this file.
     font-weight: bold;
 }
 
-/* Dice Results: Symbols ☥ *☥* '☥' ⨂ ● */
+/* Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
 .roller__regularResults {
     color: black;
     font-size: 25px;

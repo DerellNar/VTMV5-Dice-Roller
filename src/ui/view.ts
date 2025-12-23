@@ -156,7 +156,8 @@ class DiceRollView extends ItemView {
 		if (totalCrits > 1) {
 			// Each pair of crits adds 2 extra successes
 			totalSuccesses += 2 * (Math.floor(totalCrits / 2));
-			critText = ": " + (this.numMessyCrit >= 1)? this.messyCriticalMessage : this.criticalMessage;
+			critText = ': ';
+			critText += (this.numMessyCrit >= 1)? this.messyCriticalMessage : this.criticalMessage;
 		}
 		resultText = `${totalSuccesses} ` + (totalSuccesses == 1 ? this.successMessage : this.successesMessage) + critText;
 
@@ -183,7 +184,7 @@ class DiceRollView extends ItemView {
 
 		// Summary Header
 		resultsEl.createEl('p', { text: 'The Roll:', cls: 'roller__subTitle' });
-		resultsEl.createEl('p', { text: rollFinalResultText });
+		resultsEl.createEl('p', { text: rollFinalResultText, cls: 'roller__text' });
     }
 
     async onOpen() {
@@ -226,7 +227,7 @@ class DiceRollView extends ItemView {
         diceDifficultyInput.setAttribute('max', '20');
 
         // Roll button
-        const rollButton = this.container.createEl('button', { text: 'Roll Dice' });
+        const rollButton = this.container.createEl('button', { text: 'Roll Dice', cls: 'roller__button' });
         rollButton.addEventListener('click', () => {
             const numHunger = parseInt(diceHungerInput.value);
             const numRegularDice = parseInt(dicePoolInput.value) - numHunger;
@@ -295,7 +296,7 @@ class DiceRollView extends ItemView {
         });
 
         // Willpower Reroll Button
-        const willpowerRerollButton = this.container.createEl('button', { text: 'Reroll Failures with Willpower' });
+        const willpowerRerollButton = this.container.createEl('button', { text: 'Reroll Failures with Willpower', cls: 'roller__button' });
         willpowerRerollButton.toggleVisibility(false); // Hide initially
         willpowerRerollButton.addEventListener('click', () => {
             //  Get Settings for Willpower Re-roll

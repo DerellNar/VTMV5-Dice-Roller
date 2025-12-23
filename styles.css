@@ -28,6 +28,7 @@ If your plugin does not need CSS, delete this file.
     color: white;
     font-size: 20px;
     line-height: 1;
+    text-decoration: underline;
 }
 
 /* Most Text throughout the Window */
@@ -38,7 +39,7 @@ If your plugin does not need CSS, delete this file.
 
 /* Hunger Text for input box */
 .roller__hungerText {
-    color: rgb(147, 4, 32);
+    color: rgb(205, 28, 24);
     font-size: 16px;
     font-weight: bold;
 }
@@ -52,8 +53,21 @@ If your plugin does not need CSS, delete this file.
 }
 
 .roller__hungerResults {
-    color: rgb(147, 4, 32);
+    color: rgb(205, 28, 24);
     font-size: 25px;
     font-weight: bold;
     line-height: 1px;
+}
+
+/* Buttons */
+.roller__button {
+    color: white;
+    border: none; /*solid 2px rgb(118, 3, 26);*/
+    padding: 10px 10px 25px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px;
+    cursor: pointer;
 }

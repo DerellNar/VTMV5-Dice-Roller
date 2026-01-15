@@ -50,6 +50,7 @@ If your plugin does not need CSS, delete this file.
     font-size: 25px;
     font-weight: bold;
     line-height: 1px;
+    font-family: monospace;
 }
 
 .roller__hungerResults {

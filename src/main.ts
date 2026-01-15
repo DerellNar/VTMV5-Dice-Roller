@@ -28,7 +28,7 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'open-vtmv5-dice-roller-view-simple',
-			name: 'Open VTMV5 dice roller view (simple)',
+			name: 'Open VTMV5 Dice Roller',
 			callback: () => {
 				this.openDiceRollView();
 			}
@@ -47,7 +47,7 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: 'open-vtmv5-dice-roller-view-complex',
-			name: 'Open VTMV5 dice roller view (complex)',
+			name: 'Open VTMV5 Dice Roller (complex)',
 			checkCallback: (checking: boolean) => {
 				// Conditions to check
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
@@ -66,15 +66,6 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new VTMV5SettingTab(this.app, this));
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
 	}
 
 	onunload() {

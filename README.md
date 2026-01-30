@@ -1,5 +1,6 @@
 # VTM Dice Roller Plugin
 
+## Description
 This is a plugin for Obsidian (https://obsidian.md) that provides dice rolling functionality for Vampire: The Masquerade V5 TTRPG games.
 
 This project uses TypeScript to provide type checking and documentation.
@@ -13,3 +14,7 @@ This plugin does the following:
 	- Set your Dice Pool
 	- Set the number of Hunger Dice
 	- Allow for a Re-roll of regular Dice based on the scheme set in the settings by the user
+
+## Installation
+1. Download the vtmv5-dice-roller.zip file
+2. unzip the file to your "obsidian_vault\.obsidian\plugins\" folder

@@ -74,17 +74,21 @@ If your plugin does not need CSS, delete this file.
 
 /* Clickable Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
 .roller__die-button {
+	/* Reset button styles */
 	background: none;
 	border: none;
-    color: black;
     width: 40px;
     height: 40px;
     padding: 1em;
+    margin: 0 4px;
+    cursor: pointer;
+
+    /* Inherit text styling */
+    color: black;
     text-align: center;
+    font-family: inherit;
     font-size: 1em;
     font-weight: bold;
-    line-height: 1px;
-    cursor: pointer;
 }
 
 /* Add a hover effect to indicate interactiveness */

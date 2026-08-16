@@ -30,6 +30,7 @@ class VTMV5SettingTab extends PluginSettingTab {
 			.addDropdown(dropdown => dropdown
 				.addOption('max_fail', 'Re-roll Max Failed')
 				.addOption('max_crit', 'Re-roll for Max Critical')
+				.addOption('manual', 'Manually select which regular die to Re-roll')
 				.setValue(this.plugin.settings.willpowerRerollMethod)
 				.onChange(async (value) => {
 					this.plugin.settings.willpowerRerollMethod = value;

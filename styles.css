@@ -47,15 +47,14 @@ If your plugin does not need CSS, delete this file.
 /* Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
 .roller__regularResults {
     color: black;
-    font-size: 25px;
+    font-size: 1em;
     font-weight: bold;
     line-height: 1px;
-    font-family: monospace;
 }
 
 .roller__hungerResults {
     color: rgb(205, 28, 24);
-    font-size: 25px;
+    font-size: 1em;
     font-weight: bold;
     line-height: 1px;
 }
@@ -71,4 +70,29 @@ If your plugin does not need CSS, delete this file.
     font-size: 16px;
     margin: 4px;
     cursor: pointer;
+}
+
+/* Clickable Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
+.roller__die-button {
+	background: none;
+	border: none;
+    color: black;
+    width: 40px;
+    height: 40px;
+    padding: 1em;
+    text-align: center;
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 1px;
+    cursor: pointer;
+}
+
+/* Add a hover effect to indicate interactiveness */
+.roller__die-button:hover {
+    color:  rgb(118, 3, 26);
+}
+
+/* Optional: Active state for when clicked */
+.roller__die-button:active {
+	border: solid 2px  rgb(118, 3, 26);
 }

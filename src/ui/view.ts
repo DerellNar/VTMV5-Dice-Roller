@@ -108,7 +108,7 @@ class DiceRollView extends ItemView {
 		}
     }
 
-    displayVerboseResults(){
+    displayVerboseResults() {
 		// Setup Div
 		const resultDiv = this.container.querySelector('.results') as HTMLElement;
 		if (resultDiv) {
@@ -135,7 +135,23 @@ class DiceRollView extends ItemView {
 	    */
 
 		// Regular Dice Results
-		resultsEl.createEl('p', { text: this.regularResults.join(' '), cls: 'roller__regularResults' });
+		if (this.plugin.settings.willpowerRerollMethod == 'manual') {
+			const renderDiceAsButtons = (container: HTMLElement, results: (string | HTMLElement)[], cls: string) => {
+				results.forEach(result => {
+					const btn = container.createEl('button', { text: typeof result === 'string' ? result : '', cls: `${cls} roller__die-button` });
+					// Add click listener if you want to make them interactive
+					btn.addEventListener('click', () => {
+						// Handle click logic here (e.g., toggle state)
+						console.log("Die clicked", result);
+					});
+				});
+			};
+
+			const regularContainer = resultsEl.createDiv({ cls: 'roller__regularResults' });
+			renderDiceAsButtons(regularContainer, this.regularResults, 'roller__die-button');
+		} else {
+			resultsEl.createEl('p', { text: this.regularResults.join(' '), cls: 'roller__regularResults' });
+		}
 
 		// Space between regular and hunger results
 		//resultsEl.createEl('br');

@@ -1,14 +1,22 @@
+import { count } from 'console';
 import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
 import VTMV5DiceRollerPlugin from 'src/main';
+import { VTMV5DiceRollerSettings } from 'src/settings';
 
 export
 
 class DiceRollView extends ItemView {
 	private plugin: VTMV5DiceRollerPlugin;
+	private pluginSettings: VTMV5DiceRollerSettings;
 
 	//Container for the Dice Results
 	regularResults: (string | HTMLElement)[];
-    hungerResults: (string | HTMLElement)[];
+	hungerResults: (string | HTMLElement)[];
+
+	// Willpower Logic
+	canUseWillpowerReroll: boolean;
+	willpowerDiceReRoll: number[];
+	maxWillpowerReroll: number;
 
     // Containers for counting results
     numSuccess: number;
@@ -38,6 +46,12 @@ class DiceRollView extends ItemView {
     constructor(leaf: WorkspaceLeaf, plugin: VTMV5DiceRollerPlugin) {
         super(leaf);
 		this.plugin = plugin;
+		this.pluginSettings = plugin.settings;
+
+		// Initialise Willpower Logic
+		this.canUseWillpowerReroll = false;
+		this.willpowerDiceReRoll = new Array<number>();
+		this.maxWillpowerReroll = 3;
 
 		// Initialise Result Symbols
 		this.successSymbol = '𓋹';
@@ -135,14 +149,28 @@ class DiceRollView extends ItemView {
 	    */
 
 		// Regular Dice Results
-		if (this.plugin.settings.willpowerRerollMethod == 'manual') {
+		if (this.canUseWillpowerReroll && this.pluginSettings.willpowerRerollMethod == 'manual') {
 			const renderDiceAsButtons = (container: HTMLElement, results: (string | HTMLElement)[], cls: string) => {
-				results.forEach(result => {
+				results.forEach((result, index) => {
 					const btn = container.createEl('button', { text: typeof result === 'string' ? result : '', cls: `${cls} roller__die-button` });
 					// Add click listener if you want to make them interactive
 					btn.addEventListener('click', () => {
 						// Handle click logic here (e.g., toggle state)
-						console.log("Die clicked", result);
+						console.log("Die toggled", result);
+						console.log("Button Index", index);
+
+						const isBtnToggled = btn.classList.contains('is-selected');
+
+						if (isBtnToggled) {
+							const selectedDie = this.willpowerDiceReRoll.findIndex((i) => i === index);
+							this.willpowerDiceReRoll.splice(selectedDie, 1);
+							btn.classList.toggle('is-selected');
+						} else if (this.willpowerDiceReRoll.length < 3) {
+							this.willpowerDiceReRoll.push(index);
+							btn.classList.toggle('is-selected');
+						}
+
+						console.log(this.willpowerDiceReRoll);
 					});
 				});
 			};
@@ -207,9 +235,6 @@ class DiceRollView extends ItemView {
         this.container = this.containerEl.children[1];
         this.container.empty();
         this.container.setAttribute('style', 'padding: 10px;');
-
-        // Get settings
-		const pluginSettings = this.plugin.settings;
 
         // View Title
         this.container.createEl('h2', { text: 'Vampire the Masquerade V5 Dice Roller', cls: 'roller__title' });
@@ -302,48 +327,36 @@ class DiceRollView extends ItemView {
 				} else if (hungerDieResult == this.bestialFailMessage) {
 					this.numBestialFail += 1;
 				}
-            }
+			}
+
+			// Activate the Use of Willpower Reroll
+			this.canUseWillpowerReroll = true;
 
             // Display results
 			this.displayVerboseResults();
 
             // Show Willpower Reroll Button after a roll
-            willpowerRerollButton.toggleVisibility(true);
+			willpowerRerollButton.toggleVisibility(true);
         });
 
         // Willpower Reroll Button
-        const willpowerRerollButton = this.container.createEl('button', { text: 'Reroll Failures with Willpower', cls: 'roller__button' });
+        const willpowerRerollButton = this.container.createEl('button', { text: 'Willpower Reroll', cls: 'roller__button' });
         willpowerRerollButton.toggleVisibility(false); // Hide initially
         willpowerRerollButton.addEventListener('click', () => {
             //  Get Settings for Willpower Re-roll
-            //console.log(pluginSettings.willpowerRerollMethod);
-            const rerollType = pluginSettings.willpowerRerollMethod;
-			const maxReroll = 3;
+            const rerollType = this.pluginSettings.willpowerRerollMethod;
+            //console.log(rerollType);
+			const maxReroll = this.maxWillpowerReroll;
 
-            if (this.regularResults.length > 0) {
-                this.regularResults.sort((a,b) => {
-					if (a == this.failureSymbol) { return -1; }
-					else if (a == this.successSymbol && b == this.criticalSymbol) { return -1; }
-					else if (a == this.successSymbol && b == this.failureSymbol) { return 1; }
-					else if (a == this.criticalSymbol) { return 1; }
-					else { return 0; }
-                });
-				//console.log(this.regularResults);
-				for (let i = 0; i <= maxReroll && i <= this.regularResults.length && this.regularResults[i] != this.criticalSymbol; i++) {
-					let applyReroll = false;
-					const oldResult = this.regularResults[i];
-					let newResult: (string | HTMLElement) = '';
-					if (rerollType == 'max_crit') {
-						newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
-						applyReroll = true;
-					} else if (rerollType == 'max_fail' && this.regularResults[i] == this.failureSymbol) {
-						newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
-						applyReroll = true;
-					}
+			if (this.regularResults.length > 0) {
+				if (rerollType == 'manual') {
+					// Only Reroll select Indexes
+					// results.forEach((result, index) => {
+					this.willpowerDiceReRoll.forEach(rerollIndex => {
+						const oldResult = this.regularResults[rerollIndex];
+						const newResult: (string | HTMLElement) = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+						this.regularResults[rerollIndex] = newResult;
 
-					if (applyReroll) {
-						//console.log('Old Result: ' + oldResult + ', New Result: ' + newResult);
-						this.regularResults[i] = newResult;
 						if (oldResult == this.successSymbol) {
 							if (newResult == this.criticalSymbol) {
 								this.numCrit += 1;
@@ -358,8 +371,54 @@ class DiceRollView extends ItemView {
 								this.numSuccess += 1;
 							}
 						}
+					});
+				} else {
+					this.regularResults.sort((a, b) => {
+						if (a == this.failureSymbol) { return -1; }
+						else if (a == this.successSymbol && b == this.criticalSymbol) { return -1; }
+						else if (a == this.successSymbol && b == this.failureSymbol) { return 1; }
+						else if (a == this.criticalSymbol) { return 1; }
+						else { return 0; }
+					});
+					//console.log(this.regularResults);
+					for (let i = 0; i <= maxReroll && i <= this.regularResults.length && this.regularResults[i] != this.criticalSymbol; i++) {
+						let applyReroll = false;
+						const oldResult = this.regularResults[i];
+						let newResult: (string | HTMLElement) = '';
+						if (rerollType == 'max_crit') {
+							newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+							applyReroll = true;
+						} else if (rerollType == 'max_fail' && this.regularResults[i] == this.failureSymbol) {
+							newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+							applyReroll = true;
+						}
+
+						if (applyReroll) {
+							//console.log('Old Result: ' + oldResult + ', New Result: ' + newResult);
+							this.regularResults[i] = newResult;
+							if (oldResult == this.successSymbol) {
+								if (newResult == this.criticalSymbol) {
+									this.numCrit += 1;
+								} else if (newResult == this.failureSymbol) {
+									this.numSuccess -= 1;
+								}
+							} else {
+								if (newResult == this.criticalSymbol) {
+									this.numCrit += 1;
+									this.numSuccess += 1;
+								} else if (newResult == this.successSymbol) {
+									this.numSuccess += 1;
+								}
+							}
+						}
 					}
 				}
+
+				// Deactivate the Use of Willpower Reroll
+				this.canUseWillpowerReroll = false;
+
+				// Reset Willpower Dice Reroll Array
+				this.willpowerDiceReRoll.length = 0;
 
                 // Display new results
                 this.displayVerboseResults();
@@ -372,5 +431,6 @@ class DiceRollView extends ItemView {
 
     async onClose() {
         // Cleanup if needed
+		this.willpowerDiceReRoll.length = 0;
     }
 }

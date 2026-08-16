@@ -47,14 +47,14 @@ If your plugin does not need CSS, delete this file.
 /* Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
 .roller__regularResults {
     color: black;
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: bold;
     line-height: 1px;
 }
 
 .roller__hungerResults {
     color: rgb(205, 28, 24);
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: bold;
     line-height: 1px;
 }
@@ -83,11 +83,17 @@ If your plugin does not need CSS, delete this file.
     margin: 0 4px;
     cursor: pointer;
 
+    /* Force vertical alignment */
+    display: inline-flex;
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    vertical-align: middle;
+
     /* Inherit text styling */
     color: black;
-    text-align: center;
+    /* text-align: center; */
     font-family: inherit;
-    font-size: 1em;
+    font-size: 1.2em;
     font-weight: bold;
 }
 
@@ -96,7 +102,7 @@ If your plugin does not need CSS, delete this file.
     color:  rgb(118, 3, 26);
 }
 
-/* Optional: Active state for when clicked */
-.roller__die-button:active {
+/* Optional: Selected state for when clicked */
+.roller__die-button.is-selected {
 	border: solid 2px  rgb(118, 3, 26);
 }

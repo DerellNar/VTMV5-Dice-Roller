@@ -8,7 +8,7 @@ The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definiti
 
 This plugin does the following:
 - Adds a ribbon icon, which opens a workspace view to use the Dice Roller
-- Adds a command "Open VTM Dice Roller" which opens a Workspace view.
+- Adds a command "Open VTMV5 Dice Roller" which opens a Workspace view.
 - Adds a plugin setting tab to the settings page.
 - The Dice roller allows you to:
 	- Set your Dice Pool

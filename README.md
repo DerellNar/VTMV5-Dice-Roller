@@ -7,14 +7,13 @@ This project uses TypeScript to provide type checking and documentation.
 The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
 
 This plugin does the following:
-- Adds a ribbon icon, which opens a workspace view to use the Dice roller
+- Adds a ribbon icon, which opens a workspace view to use the Dice Roller
 - Adds a command "Open VTM Dice Roller" which opens a Workspace view.
 - Adds a plugin setting tab to the settings page.
-- The Dice roller allows:
+- The Dice roller allows you to:
 	- Set your Dice Pool
 	- Set the number of Hunger Dice
 	- Allow for a Re-roll of regular Dice based on the scheme set in the settings by the user
-
-## Installation
-1. Download the vtmv5-dice-roller.zip file
-2. unzip the file to your "obsidian_vault\.obsidian\plugins\" folder
+ 		- Manual: Re-roll Dice selected by User (Max 3)
+   		- Maximise Crits: Re-roll as many Dice as possible to maximise the chances of a critical
+     	- Maximise Failed Dice Re-Roll: Re-roll the maximum failed dice.

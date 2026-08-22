@@ -75,7 +75,7 @@ If your plugin does not need CSS, delete this file.
 /* Clickable Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
 .roller__die-button {
 	/* Reset button styles */
-	background: none;
+	background-color: black !important;
 	border: none;
     width: 40px;
     height: 40px;
@@ -90,7 +90,7 @@ If your plugin does not need CSS, delete this file.
     vertical-align: middle;
 
     /* Inherit text styling */
-    color: black;
+    color: white !important;
     /* text-align: center; */
     font-family: inherit;
     font-size: 1.2em;
@@ -99,10 +99,37 @@ If your plugin does not need CSS, delete this file.
 
 /* Add a hover effect to indicate interactiveness */
 .roller__die-button:hover {
-    color:  rgb(118, 3, 26);
+    color:  rgb(118, 3, 26) !important;
+}
+.roller__die-button.is-hover-disabled:hover {
+    color: white !important;
+    cursor: default;
 }
 
 /* Optional: Selected state for when clicked */
 .roller__die-button.is-selected {
-	border: solid 2px  rgb(118, 3, 26);
+	border: solid 2px  rgb(118, 3, 26) !important;
+}
+
+.roller__hungerDie-button {
+	/* Reset button styles */
+	background-color:  rgb(118, 3, 26) !important;
+	border: none;
+    width: 40px;
+    height: 40px;
+    padding: 1em;
+    margin: 0 4px;
+
+    /* Force vertical alignment */
+    display: inline-flex;
+    align-items: center; /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    vertical-align: middle;
+
+    /* Inherit text styling */
+    color: white !important;
+    /* text-align: center; */
+    font-family: inherit;
+    font-size: 1.2em;
+    font-weight: bold;
 }

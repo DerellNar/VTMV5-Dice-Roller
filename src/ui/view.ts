@@ -1,4 +1,3 @@
-import { count } from 'console';
 import { ItemView, Notice, WorkspaceLeaf } from 'obsidian';
 import VTMV5DiceRollerPlugin from 'src/main';
 import { VTMV5DiceRollerSettings } from 'src/settings';
@@ -92,8 +91,8 @@ class DiceRollView extends ItemView {
         return 'dices';
     }
 
-    getRegularDieResult(die: number): (string | HTMLElement) {
-		switch (die) {
+    getRegularDieResult(): (string | HTMLElement) {
+		switch (Math.floor(Math.random() * 10) + 1) {
 			case 10:
 				return this.criticalSymbol;
 			case 6:
@@ -106,8 +105,8 @@ class DiceRollView extends ItemView {
 		}
     }
 
-    getHungerDiceResult(die: number): (string | HTMLElement) {
-		switch (die) {
+    getHungerDiceResult(): (string | HTMLElement) {
+		switch (Math.floor(Math.random() * 10) + 1) {
 			case 10:
 				return this.messyCriticalSymbol;
 			case 6:
@@ -134,30 +133,17 @@ class DiceRollView extends ItemView {
 		const resultsEl = this.container.querySelector('.results') as HTMLElement;
 		resultsEl.createEl('p', { text: 'Regular Dice:', cls: 'roller__subTitle' });
 
-		/* Display Images Example
-	    const regularP = resultsEl.createEl('p');
-	    regularResults.forEach((item, index) => {
-	        if (typeof item === 'string') {
-	            regularP.appendChild(document.createTextNode(item));
-	        } else {
-	            regularP.appendChild(item);
-	        }
-	        if (index < regularResults.length - 1) {
-	            regularP.appendChild(document.createTextNode(' '));
-	        }
-	    });
-	    */
-
 		// Regular Dice Results
-		if (this.canUseWillpowerReroll && this.pluginSettings.willpowerRerollMethod == 'manual') {
-			const renderDiceAsButtons = (container: HTMLElement, results: (string | HTMLElement)[], cls: string) => {
-				results.forEach((result, index) => {
-					const btn = container.createEl('button', { text: typeof result === 'string' ? result : '', cls: `${cls} roller__die-button` });
-					// Add click listener if you want to make them interactive
+		const renderDiceAsButtons = (container: HTMLElement, results: (string | HTMLElement)[], cls: string) => {
+			results.forEach((result, index) => {
+				const btn = container.createEl('button', { text: typeof result === 'string' ? result : '', cls: 'roller__die-button' });
+				// Add click listener if you want to make them interactive
+				if (this.pluginSettings.willpowerRerollMethod == 'manual') {
+					btn.classList.remove("is-hover-disabled");
 					btn.addEventListener('click', () => {
 						// Handle click logic here (e.g., toggle state)
-						console.log("Die toggled", result);
-						console.log("Button Index", index);
+						//console.log("Die toggled", result);
+						//console.log("Button Index", index);
 
 						const isBtnToggled = btn.classList.contains('is-selected');
 
@@ -170,23 +156,23 @@ class DiceRollView extends ItemView {
 							btn.classList.toggle('is-selected');
 						}
 
-						console.log(this.willpowerDiceReRoll);
+						//console.log(this.willpowerDiceReRoll);
 					});
-				});
-			};
+				} else {
+					btn.classList.add("is-hover-disabled");
+				}
+			});
+		};
 
-			const regularContainer = resultsEl.createDiv({ cls: 'roller__regularResults' });
-			renderDiceAsButtons(regularContainer, this.regularResults, 'roller__die-button');
-		} else {
-			resultsEl.createEl('p', { text: this.regularResults.join(' '), cls: 'roller__regularResults' });
-		}
-
-		// Space between regular and hunger results
-		//resultsEl.createEl('br');
+		const regularContainer = resultsEl.createDiv();
+		renderDiceAsButtons(regularContainer, this.regularResults, 'roller__die-button');
 
 		// Hunger Dice Results
-		resultsEl.createEl('p', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
-		resultsEl.createEl('p', { text: this.hungerResults.join(' '), cls: 'roller__hungerResults' });
+		const hungerContainer = resultsEl.createDiv();
+		hungerContainer.createEl('p', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
+		this.hungerResults.forEach(hungerResult => {
+			hungerContainer.createEl('button', { text: typeof hungerResult === 'string' ? hungerResult : '', cls: 'roller__hungerDie-button' });
+		});
 
 		/* Display verbose result */
 		// Calculate total crits including messy crits
@@ -205,9 +191,6 @@ class DiceRollView extends ItemView {
 		}
 		resultText = `${totalSuccesses} ` + (totalSuccesses == 1 ? this.successMessage : this.successesMessage) + critText;
 
-		// Space before summary
-		//resultsEl.createEl('br');
-
 		// Summary Header
 		resultsEl.createEl('p', { text: 'Result:', cls: 'roller__subTitle' });
 		resultsEl.createEl('p', { text: resultText, cls: 'roller__text' });
@@ -219,15 +202,14 @@ class DiceRollView extends ItemView {
 			if (this.numDifficulty > 0 && (this.numDifficulty - this.numSuccess) == 1) {
 				rollFinalResultText += ': 1 away';
 			}
+		} else if (this.numMessyCrit >= 1) {
+			rollFinalResultText = this.messyCriticalMessage;
 		} else {
 			rollFinalResultText = this.successMessage;
 		}
 
-		// Space before Final Result
-		resultsEl.createEl('br');
-
 		// Summary Header
-		resultsEl.createEl('p', { text: 'The Roll:', cls: 'roller__subTitle' });
+		resultsEl.createEl('p', { text: 'Outcome of the Roll:', cls: 'roller__subTitle' });
 		resultsEl.createEl('p', { text: rollFinalResultText, cls: 'roller__text' });
     }
 
@@ -292,17 +274,8 @@ class DiceRollView extends ItemView {
 			this.regularResults = [];
             for (let i = 0; i < numRegularDice; i++) {
                 // Random number between 1 and 10
-				const regularDieResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+				const regularDieResult = this.getRegularDieResult();
 				this.regularResults.push(regularDieResult);
-
-				/* Example: Push an image instead of text
-	            const critImg = document.createElement('img');
-	            critImg.src = './images/Crit.png'; // Path of Image
-	            critImg.alt = 'Critical Success';
-	            critImg.style.width = '20px';
-	            critImg.style.height = '20px';
-	            this.regularResults.push(critImg);
-	            */
 
 				if (regularDieResult == this.criticalSymbol) {
 					this.numCrit += 1;
@@ -316,7 +289,7 @@ class DiceRollView extends ItemView {
             this.hungerResults = [];
             for (let i = 0; i < numHunger; i++) {
                 // Random number between 1 and 10
-				const hungerDieResult = this.getHungerDiceResult(Math.floor(Math.random() * 10) + 1);
+				const hungerDieResult = this.getHungerDiceResult();
 				this.hungerResults.push(hungerDieResult);
 
 				if (hungerDieResult == this.messyCriticalSymbol) {
@@ -351,10 +324,9 @@ class DiceRollView extends ItemView {
 			if (this.regularResults.length > 0) {
 				if (rerollType == 'manual') {
 					// Only Reroll select Indexes
-					// results.forEach((result, index) => {
 					this.willpowerDiceReRoll.forEach(rerollIndex => {
 						const oldResult = this.regularResults[rerollIndex];
-						const newResult: (string | HTMLElement) = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+						const newResult: (string | HTMLElement) = this.getRegularDieResult();
 						this.regularResults[rerollIndex] = newResult;
 
 						if (oldResult == this.successSymbol) {
@@ -383,17 +355,17 @@ class DiceRollView extends ItemView {
 					//console.log(this.regularResults);
 					for (let i = 0; i <= maxReroll && i <= this.regularResults.length && this.regularResults[i] != this.criticalSymbol; i++) {
 						let applyReroll = false;
-						const oldResult = this.regularResults[i];
 						let newResult: (string | HTMLElement) = '';
-						if (rerollType == 'max_crit') {
-							newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+						if (rerollType == 'max_crit' && this.regularResults[i] != this.criticalSymbol) {
+							newResult = this.getRegularDieResult();
 							applyReroll = true;
 						} else if (rerollType == 'max_fail' && this.regularResults[i] == this.failureSymbol) {
-							newResult = this.getRegularDieResult(Math.floor(Math.random() * 10) + 1);
+							newResult = this.getRegularDieResult();
 							applyReroll = true;
 						}
 
 						if (applyReroll) {
+							const oldResult = this.regularResults[i];
 							//console.log('Old Result: ' + oldResult + ', New Result: ' + newResult);
 							this.regularResults[i] = newResult;
 							if (oldResult == this.successSymbol) {

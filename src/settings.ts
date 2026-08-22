@@ -26,11 +26,11 @@ class VTMV5SettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Willpower Re-roll Method')
-			.setDesc('Choose how to use the willpower Re-roll')
+			.setDesc('Choose Willpower Re-roll Strategy')
 			.addDropdown(dropdown => dropdown
 				.addOption('max_fail', 'Re-roll Max Failed')
 				.addOption('max_crit', 'Re-roll for Max Critical')
-				.addOption('manual', 'Manually select which regular die to Re-roll')
+				.addOption('manual', 'Manually select Dice to Re-roll')
 				.setValue(this.plugin.settings.willpowerRerollMethod)
 				.onChange(async (value) => {
 					this.plugin.settings.willpowerRerollMethod = value;

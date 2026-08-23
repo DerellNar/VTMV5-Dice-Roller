@@ -10,7 +10,7 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 		await this.loadSettings();
 
 		// Register the view
-		this.registerView('vtmv5-dice-roller', (leaf: WorkspaceLeaf) => new DiceRollView(leaf, this));
+		this.registerView('vtmvfive-dice-roller', (leaf: WorkspaceLeaf) => new DiceRollView(leaf, this));
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dices', 'VTMV5 Dice Roller', (_evt: MouseEvent) => {
@@ -27,7 +27,7 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'open-vtmv5-dice-roller-view-simple',
+			id: 'open-vtmvfive-dice-roller-view-simple',
 			name: 'Open VTMV5 Dice Roller',
 			callback: () => {
 				this.openDiceRollView();
@@ -36,7 +36,7 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'vtmv5-dice-roller-editor-command',
+			id: 'vtmvfive-dice-roller-editor-command',
 			name: 'VTMV5 Dice Roller editor command',
 			editorCallback: (editor: Editor, _view: MarkdownView) => {
 				console.log(editor.getSelection());
@@ -46,7 +46,7 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
-			id: 'open-vtmv5-dice-roller-view-complex',
+			id: 'open-vtmvfive-dice-roller-view-complex',
 			name: 'Open VTMV5 Dice Roller (complex)',
 			checkCallback: (checking: boolean) => {
 				// Conditions to check
@@ -69,12 +69,12 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.app.workspace.detachLeavesOfType('vtmv5-dice-roller');
+		this.app.workspace.detachLeavesOfType('vtmvfive-dice-roller');
 	}
 
 	async openDiceRollView() {
 		const leaf = this.app.workspace.getRightLeaf(false);
-		if (leaf) { await leaf.setViewState({ type: 'vtmv5-dice-roller' }); }
+		if (leaf) { await leaf.setViewState({ type: 'vtmvfive-dice-roller' }); }
 	}
 
 	async loadSettings() {

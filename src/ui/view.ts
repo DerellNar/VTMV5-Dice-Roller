@@ -80,7 +80,7 @@ class DiceRollView extends ItemView {
     }
 
 	getViewType(): string {
-        return 'vtmv5-dice-roller';
+        return 'vtmvfive-dice-roller';
     }
 
     getDisplayText(): string {

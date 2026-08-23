@@ -69,7 +69,6 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 	}
 
 	onunload() {
-		this.app.workspace.detachLeavesOfType('vtmvfive-dice-roller');
 	}
 
 	async openDiceRollView() {

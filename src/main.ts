@@ -27,8 +27,8 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'open-vtmvfive-dice-roller-view-simple',
-			name: 'Open VTMV5 Dice Roller',
+			id: 'open-view-simple',
+			name: 'Open View',
 			callback: () => {
 				this.openDiceRollView();
 			}
@@ -36,18 +36,18 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 
 		// This adds an editor command that can perform some operation on the current editor instance
 		this.addCommand({
-			id: 'vtmvfive-dice-roller-editor-command',
-			name: 'VTMV5 Dice Roller editor command',
+			id: 'open-editor',
+			name: 'Editor',
 			editorCallback: (editor: Editor, _view: MarkdownView) => {
-				console.log(editor.getSelection());
+				//console.log(editor.getSelection());
 				editor.replaceSelection('VTMV5 Dice Roller Editor Command');
 			}
 		});
 
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
-			id: 'open-vtmvfive-dice-roller-view-complex',
-			name: 'Open VTMV5 Dice Roller (complex)',
+			id: 'open-view-complex',
+			name: 'Open Complex View',
 			checkCallback: (checking: boolean) => {
 				// Conditions to check
 				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);

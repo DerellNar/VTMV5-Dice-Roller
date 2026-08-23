@@ -1,21 +1,12 @@
-/*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
-
 /* Official VTM Red: rgb(118, 3, 26); */
 
-.roller__container {
+.vtmvfive-dice-roller .roller__container {
     border: 10px solid var(--background-modifier-border);
     padding: 10 px;
 }
 
 /* Window Title */
-.roller__title {
+.vtmvfive-dice-roller .roller__title {
 	/* border: 5px solid rgb(118, 3, 26); */
     font-size: 24px;
     font-weight: bold;
@@ -24,7 +15,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 /* Section Titles: "DicePool:", "Result Dice:" & "Hunger Dice:" */
-.roller__subTitle {
+.vtmvfive-dice-roller .roller__subTitle {
     color: white;
     font-size: 20px;
     line-height: 1;
@@ -32,35 +23,20 @@ If your plugin does not need CSS, delete this file.
 }
 
 /* Most Text throughout the Window */
-.roller__text {
+.vtmvfive-dice-roller .roller__text {
     color: white;
     font-size: 16px;
 }
 
 /* Hunger Text for input box */
-.roller__hungerText {
+.vtmvfive-dice-roller .roller__hungerText {
     color: rgb(205, 28, 24);
     font-size: 16px;
     font-weight: bold;
 }
 
-/* Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
-.roller__regularResults {
-    color: black;
-    font-size: 1.2em;
-    font-weight: bold;
-    line-height: 1px;
-}
-
-.roller__hungerResults {
-    color: rgb(205, 28, 24);
-    font-size: 1.2em;
-    font-weight: bold;
-    line-height: 1px;
-}
-
 /* Buttons */
-.roller__button {
+.vtmvfive-dice-roller .roller__input-button {
     color: white;
     border: none; /*solid 2px rgb(118, 3, 26);*/
     padding: 10px 10px 25px 10px;
@@ -73,9 +49,9 @@ If your plugin does not need CSS, delete this file.
 }
 
 /* Clickable Dice Results: Symbols [𓋹 *𓋹* '𓋹' ⨂ ●] */
-.roller__die-button {
+.vtmvfive-dice-roller .roller__regularDie-button {
 	/* Reset button styles */
-	background-color: black !important;
+	background-color: black;
 	border: none;
     width: 40px;
     height: 40px;
@@ -90,30 +66,30 @@ If your plugin does not need CSS, delete this file.
     vertical-align: middle;
 
     /* Inherit text styling */
-    color: white !important;
+    color: white;
     /* text-align: center; */
-    font-family: inherit;
+    font-family: monospace;
     font-size: 1.2em;
     font-weight: bold;
 }
 
 /* Add a hover effect to indicate interactiveness */
-.roller__die-button:hover {
-    color:  rgb(118, 3, 26) !important;
+.vtmvfive-dice-roller .roller__regularDie-button:hover {
+    color:  rgb(118, 3, 26);
 }
-.roller__die-button.is-hover-disabled:hover {
-    color: white !important;
+.vtmvfive-dice-roller .roller__regularDie-button.is-hover-disabled:hover {
+    color: white;
     cursor: default;
 }
 
 /* Optional: Selected state for when clicked */
-.roller__die-button.is-selected {
-	border: solid 2px  rgb(118, 3, 26) !important;
+.vtmvfive-dice-roller .roller__regularDie-button.is-selected {
+	border: solid 2px  rgb(118, 3, 26);
 }
 
-.roller__hungerDie-button {
+.vtmvfive-dice-roller .roller__hungerDie-button {
 	/* Reset button styles */
-	background-color:  rgb(118, 3, 26) !important;
+	background-color:  rgb(118, 3, 26);
 	border: none;
     width: 40px;
     height: 40px;
@@ -127,9 +103,9 @@ If your plugin does not need CSS, delete this file.
     vertical-align: middle;
 
     /* Inherit text styling */
-    color: white !important;
+    color: white;
     /* text-align: center; */
-    font-family: inherit;
+    font-family: monospace;
     font-size: 1.2em;
     font-weight: bold;
 }

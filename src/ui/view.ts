@@ -131,45 +131,41 @@ class DiceRollView extends ItemView {
 		}
 
 		const resultsEl = this.container.querySelector('.results') as HTMLElement;
-		resultsEl.createEl('p', { text: 'Regular Dice:', cls: 'roller__subTitle' });
 
 		// Regular Dice Results
-		const renderDiceAsButtons = (container: HTMLElement, results: (string | HTMLElement)[], cls: string) => {
-			results.forEach((result, index) => {
-				const btn = container.createEl('button', { text: typeof result === 'string' ? result : '', cls: 'roller__die-button' });
-				// Add click listener if you want to make them interactive
-				if (this.pluginSettings.willpowerRerollMethod == 'manual') {
-					btn.classList.remove("is-hover-disabled");
-					btn.addEventListener('click', () => {
-						// Handle click logic here (e.g., toggle state)
-						//console.log("Die toggled", result);
-						//console.log("Button Index", index);
-
-						const isBtnToggled = btn.classList.contains('is-selected');
-
-						if (isBtnToggled) {
-							const selectedDie = this.willpowerDiceReRoll.findIndex((i) => i === index);
-							this.willpowerDiceReRoll.splice(selectedDie, 1);
-							btn.classList.toggle('is-selected');
-						} else if (this.willpowerDiceReRoll.length < 3) {
-							this.willpowerDiceReRoll.push(index);
-							btn.classList.toggle('is-selected');
-						}
-
-						//console.log(this.willpowerDiceReRoll);
-					});
-				} else {
-					btn.classList.add("is-hover-disabled");
-				}
-			});
-		};
-
+		resultsEl.createEl('p', { text: 'Regular Dice:', cls: 'roller__subTitle' });
 		const regularContainer = resultsEl.createDiv();
-		renderDiceAsButtons(regularContainer, this.regularResults, 'roller__die-button');
+		this.regularResults.forEach((result, index) => {
+			const btn = regularContainer.createEl('button', { text: typeof result === 'string' ? result : '', cls: 'roller__regularDie-button' });
+			// Add click listener if you want to make them interactive
+			if (this.canUseWillpowerReroll && this.pluginSettings.willpowerRerollMethod == 'manual') {
+				btn.classList.remove("is-hover-disabled");
+				btn.addEventListener('click', () => {
+					// Handle click logic here (e.g., toggle state)
+					//console.log("Die toggled", result);
+					//console.log("Button Index", index);
+
+					const isBtnToggled = btn.classList.contains('is-selected');
+
+					if (isBtnToggled) {
+						const selectedDie = this.willpowerDiceReRoll.findIndex((i) => i === index);
+						this.willpowerDiceReRoll.splice(selectedDie, 1);
+						btn.classList.toggle('is-selected');
+					} else if (this.willpowerDiceReRoll.length < 3) {
+						this.willpowerDiceReRoll.push(index);
+						btn.classList.toggle('is-selected');
+					}
+
+					//console.log(this.willpowerDiceReRoll);
+				});
+			} else {
+				btn.classList.add("is-hover-disabled");
+			}
+		});
 
 		// Hunger Dice Results
+		resultsEl.createEl('p', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
 		const hungerContainer = resultsEl.createDiv();
-		hungerContainer.createEl('p', { text: 'Hunger Dice:', cls: 'roller__subTitle' });
 		this.hungerResults.forEach(hungerResult => {
 			hungerContainer.createEl('button', { text: typeof hungerResult === 'string' ? hungerResult : '', cls: 'roller__hungerDie-button' });
 		});
@@ -183,6 +179,8 @@ class DiceRollView extends ItemView {
 		const totalCrits = this.numCrit + this.numMessyCrit;
 		let totalSuccesses = this.numSuccess;
 		//console.log('totalCrits:', totalCrits);
+		//console.log('numCrits:', this.numCrit);
+		//console.log('numMessyCrits:', this.numMessyCrit);
 		if (totalCrits > 1) {
 			// Each pair of crits adds 2 extra successes
 			totalSuccesses += 2 * (Math.floor(totalCrits / 2));
@@ -202,7 +200,7 @@ class DiceRollView extends ItemView {
 			if (this.numDifficulty > 0 && (this.numDifficulty - this.numSuccess) == 1) {
 				rollFinalResultText += ': 1 away';
 			}
-		} else if (this.numMessyCrit >= 1) {
+		} else if (totalCrits > 1 && this.numMessyCrit >= 1) {
 			rollFinalResultText = this.messyCriticalMessage;
 		} else {
 			rollFinalResultText = this.successMessage;
@@ -215,7 +213,8 @@ class DiceRollView extends ItemView {
 
     async onOpen() {
         this.container = this.containerEl.children[1];
-        this.container.empty();
+		this.container.empty();
+		this.container.addClass('vtmvfive-dice-roller');
 
         // View Title
         this.container.createEl('h2', { text: 'Vampire the Masquerade V5 Dice Roller', cls: 'roller__title' });
@@ -249,7 +248,7 @@ class DiceRollView extends ItemView {
         diceDifficultyInput.setAttribute('max', '20');
 
         // Roll button
-        const rollButton = this.container.createEl('button', { text: 'Roll Dice', cls: 'roller__button' });
+        const rollButton = this.container.createEl('button', { text: 'Roll Dice', cls: 'roller__input-button' });
         rollButton.addEventListener('click', () => {
             const numHunger = parseInt(diceHungerInput.value);
             const numRegularDice = parseInt(dicePoolInput.value) - numHunger;
@@ -312,7 +311,7 @@ class DiceRollView extends ItemView {
         });
 
         // Willpower Reroll Button
-        const willpowerRerollButton = this.container.createEl('button', { text: 'Willpower Reroll', cls: 'roller__button' });
+        const willpowerRerollButton = this.container.createEl('button', { text: 'Willpower Reroll', cls: 'roller__input-button' });
         willpowerRerollButton.toggleVisibility(false); // Hide initially
         willpowerRerollButton.addEventListener('click', () => {
             //  Get Settings for Willpower Re-roll

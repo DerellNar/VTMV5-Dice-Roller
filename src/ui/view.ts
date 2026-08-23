@@ -216,7 +216,6 @@ class DiceRollView extends ItemView {
     async onOpen() {
         this.container = this.containerEl.children[1];
         this.container.empty();
-        this.container.setAttribute('style', 'padding: 10px;');
 
         // View Title
         this.container.createEl('h2', { text: 'Vampire the Masquerade V5 Dice Roller', cls: 'roller__title' });

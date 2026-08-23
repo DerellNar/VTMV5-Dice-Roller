@@ -1,4 +1,4 @@
-# VTM Dice Roller Plugin
+# VTMV5 Dice Roller
 
 ## Description
 This is a plugin for Obsidian (https://obsidian.md) that provides dice rolling functionality for Vampire: The Masquerade V5 TTRPG games.

@@ -21,10 +21,6 @@ export default class VTMV5DiceRollerPlugin extends Plugin {
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('VTMV5 Dice Roller');
-
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'open-view-simple',

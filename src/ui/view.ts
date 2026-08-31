@@ -88,7 +88,7 @@ class DiceRollView extends ItemView {
     }
 
     getIcon(): string {
-        return 'dices';
+        return 'vtmAnkh-icon';
     }
 
     getRegularDieResult(): (string | HTMLElement) {

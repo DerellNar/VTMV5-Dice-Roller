@@ -1,6 +1,6 @@
 {
 	"name": "vtmvfive-dice-roller",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A dice roller plugin for Vampire The Masquerade V5 TTRPG.",
 	"main": "main.js",
 	"scripts": {
